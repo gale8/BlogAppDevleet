@@ -2,16 +2,20 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { PrijavaComponent } from './prijava/prijava.component';
 import {ReactiveFormsModule, FormsModule} from "@angular/forms";
-import { RegistracijaComponent } from './registracija/registracija.component';
+
+/* KOMPONENTE */
+import { AppComponent } from './app.component';
+import { PrijavaComponent } from './komponente/prijava/prijava.component';
+import { RegistracijaComponent } from './komponente/registracija/registracija.component';
+import {SeznamBlogovComponent} from "./komponente/seznam-blogov/seznam-blogov.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     PrijavaComponent,
-    RegistracijaComponent
+    RegistracijaComponent,
+    SeznamBlogovComponent
   ],
     imports: [
         BrowserModule,
