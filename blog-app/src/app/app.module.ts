@@ -11,6 +11,7 @@ import { RegistracijaComponent } from './komponente/registracija/registracija.co
 import {SeznamBlogovComponent} from "./komponente/seznam-blogov/seznam-blogov.component";
 import { PodrobnostiBlogaComponent } from './komponente/podrobnosti-bloga/podrobnosti-bloga.component';
 import { KreiranjeBlogaComponent } from './komponente/kreiranje-bloga/kreiranje-bloga.component';
+import { UrediBlogComponent } from './komponente/uredi-blog/uredi-blog.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { KreiranjeBlogaComponent } from './komponente/kreiranje-bloga/kreiranje-
     RegistracijaComponent,
     SeznamBlogovComponent,
     PodrobnostiBlogaComponent,
-    KreiranjeBlogaComponent
+    KreiranjeBlogaComponent,
+    UrediBlogComponent
   ],
     imports: [
         BrowserModule,
