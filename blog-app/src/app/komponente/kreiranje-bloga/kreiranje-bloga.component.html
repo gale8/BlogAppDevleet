@@ -1,0 +1,18 @@
+<!-- GLAVNI NASLOV -->
+<h1 class="mt-4 glavni-naslov">{{naslov}}</h1>
+
+<!-- KREIRAJ BLOG FORM -->
+<form class="zacetni-obrazec mt-4" (ngSubmit)="kreirajBlog()">
+  <div class="form-group">
+    <label for="naslov"><b>Naslov</b></label>
+    <input id="naslov" class="form-control vnosno-polje" type="text" name="naslov" placeholder="Keep it short and sweet." [(ngModel)]="noviBlog.naslov" required/>
+  </div>
+  <div class="form-group">
+    <label for="vsebina"><b>Vsebina</b></label>
+    <textarea id="vsebina" class="form-control" name="vsebina" [(ngModel)]="noviBlog.vsebina" rows="10"></textarea>
+  </div>
+  <button type="submit" class="btn btn-lg btn-info" style="width: 100%">Ustvari blog</button>
+</form>
+<div class="mt-1 mb-3" style="width: 40%; margin: 0 auto; text-align: left">
+  <b><a style="font-size: 1.3em" routerLink="/">Nazaj</a></b>
+</div>
