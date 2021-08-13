@@ -1,0 +1,34 @@
+<!-- GLAVNI NASLOV -->
+<h1 class="mt-5 glavni-naslov">{{naslov}}</h1>
+
+<!-- REGISTRACIJA FORM -->
+<form class="zacetni-obrazec mt-5" (ngSubmit)="registracija()">
+
+  <h2>Registracija</h2>
+  <p>Že imaš ustvarjen računa? <b><a routerLink="/prijava">Prijava</a></b></p>
+
+  <div class="form-row mb-3">
+    <div class="col">
+      <label for="ime"><b>Ime</b></label>
+      <input id="ime" class="form-control vnosno-polje" type="text" name="ime" placeholder="npr. Tone" [(ngModel)]="registracijaPodatki.ime" required/>
+    </div>
+    <div class="col">
+      <label for="priimek"><b>Priimek</b></label>
+      <input id="priimek" class="form-control vnosno-polje" type="text" name="priimek" placeholder="npr. Primer" [(ngModel)]="registracijaPodatki.priimek" required/>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="email"><b>E-naslov</b></label>
+    <input id="email" class="form-control vnosno-polje" type="text" name="email" placeholder="tone.primer@gmail.com" [(ngModel)]="registracijaPodatki.email" required/>
+  </div>
+  <div class="form-group">
+    <label for="username"><b>Uporabniško ime</b></label>
+    <input id="username" class="form-control vnosno-polje" type="text" name="username" placeholder="npr. Tone123" [(ngModel)]="registracijaPodatki.username" required/>
+  </div>
+  <div class="form-group">
+    <label for="geslo"><b>Geslo</b></label>
+    <input id="geslo" class="form-control" type="text" name="geslo" [(ngModel)]="registracijaPodatki.geslo" required/>
+  </div>
+  <button type="submit" class="btn btn-lg btn-info" style="width: 100%">Registracija</button>
+</form>
