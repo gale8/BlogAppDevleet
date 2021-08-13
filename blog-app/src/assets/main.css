@@ -1,0 +1,23 @@
+body {
+  background-color: #EEEEEE;
+  color: #333333;
+}
+.glavni-naslov {
+  font-size: 4.5em;
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* stil zajema PRIJAVNI in REGISTRACIJA OBRAZEC!!! */
+.zacetni-obrazec {
+  width: 40%;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 2%;
+}
+
+.vnosno-polje {
+  border: 3px solid #EEEEEE;
+}

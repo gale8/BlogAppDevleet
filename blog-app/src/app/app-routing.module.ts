@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import {PrijavaComponent} from "./prijava/prijava.component";
 
-const routes: Routes = [];
+const routes: Routes = [
+  {path:'prijava', component: PrijavaComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
