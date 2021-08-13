@@ -1,0 +1,13 @@
+<div class="container mt-5">
+  <b><a style="font-size: 1.3em" routerLink="/">Nazaj</a></b>
+</div>
+<div class="container mt-2" id="blog">
+  <!-- MAIN INFO -->
+  <h1>{{blogInfo.naslov}}</h1>
+  <h6 class="text-muted">by {{blogInfo.avtor}}</h6>
+  <!-- VSEBINA BLOGA -->
+  <h4 class="mt-4">Vsebina</h4>
+  <p class="mt-2">
+    {{blogInfo.content}}
+  </p>
+</div>
