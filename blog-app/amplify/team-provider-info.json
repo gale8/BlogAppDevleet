@@ -10,6 +10,19 @@
       "StackName": "amplify-blogapp-dev-03715",
       "StackId": "arn:aws:cloudformation:eu-west-2:513542032132:stack/amplify-blogapp-dev-03715/361b84f0-f899-11eb-92de-02e3cdcba4dc",
       "AmplifyAppId": "d1vxm41ub3bon"
+    },
+    "categories": {
+      "storage": {
+        "BlogDB": {
+          "tableName": "BlogDB",
+          "region": "eu-west-2",
+          "arn": "arn:aws:dynamodb:eu-west-2:513542032132:table/BlogDB",
+          "partitionKeyName": "PK",
+          "partitionKeyType": "S",
+          "sortKeyName": "SK",
+          "sortKeyType": "S"
+        }
+      }
     }
   }
 }
