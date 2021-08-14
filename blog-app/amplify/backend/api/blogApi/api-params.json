@@ -1,0 +1,45 @@
+{
+  "paths": [
+    {
+      "name": "/blogs",
+      "lambdaFunction": "blogsFunction",
+      "privacy": {
+        "protected": true,
+        "auth": [
+          "/POST",
+          "/GET",
+          "/PUT",
+          "/PATCH",
+          "/DELETE"
+        ],
+        "unauth": [
+          "/GET"
+        ]
+      },
+      "policyResourceName": "/blogs"
+    }
+  ],
+  "resourceName": "blogApi",
+  "apiName": "blogApi",
+  "functionArns": [
+    {
+      "lambdaFunction": "blogsFunction"
+    }
+  ],
+  "privacy": {
+    "auth": 1,
+    "unauth": 1,
+    "authRoleName": "amplify-blogapp-dev-03715-authRole",
+    "unAuthRoleName": "amplify-blogapp-dev-03715-unauthRole"
+  },
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "blogsFunction",
+      "attributes": [
+        "Name",
+        "Arn"
+      ]
+    }
+  ]
+}

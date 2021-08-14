@@ -25,6 +25,12 @@
       },
       "auth": {
         "blogapp73c32b80": {}
+      },
+      "function": {
+        "blogsFunction": {
+          "deploymentBucketName": "amplify-blogapp-dev-03715-deployment",
+          "s3Key": "amplify-builds/blogsFunction-706a2f44686c764d5447-build.zip"
+        }
       }
     }
   }
