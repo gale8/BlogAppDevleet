@@ -22,6 +22,9 @@
           "sortKeyName": "SK",
           "sortKeyType": "S"
         }
+      },
+      "auth": {
+        "blogapp73c32b80": {}
       }
     }
   }
