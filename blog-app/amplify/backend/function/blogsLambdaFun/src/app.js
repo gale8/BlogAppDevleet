@@ -60,8 +60,17 @@ const convertUrlType = (param, type) => {
 
 app.get(path, function(req, res) {
 
+  // REZULTATE FILTRIRAJ -> da dobis samo SEZNAM BLOGOV
   let queryParams = {
     TableName: tableName,
+    FilterExpression: 'begins_with(#pk,:val) AND begins_with(#sk,:val)',
+    ExpressionAttributeNames: {
+      '#pk': 'PK',
+      '#sk': 'SK'
+    },
+    ExpressionAttributeValues: {
+      ':val': 'BLOG#'
+    }
   };
 
   dynamodb.scan(queryParams, (err, data) => {
