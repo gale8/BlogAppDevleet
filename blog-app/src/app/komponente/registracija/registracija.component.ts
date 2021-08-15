@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Auth } from 'aws-amplify';
+import {Router} from "@angular/router";
+import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
 
 @Component({
   selector: 'app-registracija',
@@ -17,15 +20,27 @@ export class RegistracijaComponent implements OnInit {
     username: ""
   };
 
-  constructor() { }
+  constructor(private router: Router, private avtentikacijaService: AvtentikacijaService) { }
 
   ngOnInit(): void {
+    // preveri če je uporabnik prijavljen --> preusmeri na glavno stran če je
+    this.avtentikacijaService.jePrijavljen()
+      .catch()
+      .then(res => {
+        if(res) this.router.navigate(['/']);
+      });
   }
 
-  registracija() {
+  async registracija() {
+    let username = this.registracijaPodatki.username;
+    let password = this.registracijaPodatki.geslo;
+    let email = this.registracijaPodatki.email;
     // TODO filtriranje in preverjanje INPUT-a!!!
     console.log(this.registracijaPodatki);
-    // TODO posli podatke na streznik za avtorizacijo s pomocjo SERVICE-a!!!
+    // poslji podatke na streznik za avtorizacijo s pomocjo SERVICE-a
+    this.avtentikacijaService.registracija(username,email,password)
+      .catch()
+      .then(user => this.router.navigate(['prijava']));
   }
 
 }

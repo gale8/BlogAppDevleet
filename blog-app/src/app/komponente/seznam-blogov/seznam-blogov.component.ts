@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Auth } from 'aws-amplify';
 
 @Component({
   selector: 'app-seznam-blogov',
@@ -17,6 +18,15 @@ export class SeznamBlogovComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.jePrijavljen();
   }
 
+  async jePrijavljen() {
+    try {
+      let currentUser = await Auth.currentUserInfo();
+      console.log(currentUser);
+    } catch (err) {
+      console.log("Err retreiving current user's info: "+err);
+    }
+  }
 }
