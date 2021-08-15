@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth } from 'aws-amplify';
+import { Auth, API } from 'aws-amplify';
 
 @Component({
   selector: 'app-seznam-blogov',
@@ -16,9 +16,16 @@ export class SeznamBlogovComponent implements OnInit {
   ];
 
   constructor() { }
-
   ngOnInit(): void {
     this.jePrijavljen();
+
+    const myInit = {
+      headers: {},
+      response: true,
+    };
+    API.get("blogAppApi","/blogs",myInit)
+      .catch(err => console.log(err))
+      .then(results => console.log(results));
   }
 
   async jePrijavljen() {

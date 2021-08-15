@@ -1,6 +1,6 @@
 {
     "identityPoolName": "blogapp6500b179_identitypool_6500b179",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "blogap6500b179",
     "userPoolName": "blogapp6500b179_userpool_6500b179",
     "autoVerifiedAttributes": [

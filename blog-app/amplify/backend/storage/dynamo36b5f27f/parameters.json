@@ -1,0 +1,7 @@
+{
+    "tableName": "blogAppDB",
+    "partitionKeyName": "PK",
+    "partitionKeyType": "S",
+    "sortKeyName": "SK",
+    "sortKeyType": "S"
+}
