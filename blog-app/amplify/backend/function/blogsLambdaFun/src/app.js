@@ -13,6 +13,8 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 
+var uuid = require('node-uuid')
+
 AWS.config.update({ region: process.env.TABLE_REGION });
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -163,10 +165,17 @@ app.post(path, function(req, res) {
     req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   }
 
+  // nastavimo UNIQUE PK!!!
+  var pkUID = "BLOG#"+uuid.v1();
+  var skUID = pkUID;
+
+  req.body["PK"] = pkUID;
+  req.body["SK"] = skUID;
+
   let putItemParams = {
     TableName: tableName,
     Item: req.body
-  }
+  };
   dynamodb.put(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;

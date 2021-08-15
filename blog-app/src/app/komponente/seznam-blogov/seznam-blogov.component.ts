@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import { Auth, API } from 'aws-amplify';
 import {Blog} from "../../modeli/Blog";
 import {DatabaseService} from "../../storitve/database.service";
@@ -8,7 +8,7 @@ import {DatabaseService} from "../../storitve/database.service";
   templateUrl: './seznam-blogov.component.html',
   styleUrls: ['./seznam-blogov.component.css']
 })
-export class SeznamBlogovComponent implements OnInit {
+export class SeznamBlogovComponent implements OnInit, OnChanges {
 
   tabelaBlogov: Blog[] = [];
 
@@ -30,6 +30,14 @@ export class SeznamBlogovComponent implements OnInit {
       this.tabelaBlogov = rez as Blog[];
     });
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // pridobi bloge iz PB
+    this.databaseService.getBlogi().then(rez => {
+      this.tabelaBlogov = rez as Blog[];
+    });
+  }
+
 
   async jePrijavljen() {
     try {
