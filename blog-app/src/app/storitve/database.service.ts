@@ -28,7 +28,7 @@ export class DatabaseService {
       .catch(err => console.log(err));
   }
 
-  createNewBlog(blog: any) {
+  createNewBlog(blog: any) : Promise<any> {
     // posli podatke na streznik
     const myInit = {
       body: blog, // vneseni podatki!
@@ -53,7 +53,7 @@ export class DatabaseService {
     });
   }
 
-  updateBlogById(initParams: any) {
+  updateBlogById(initParams: any) : Promise<any> {
 
     return API.put("blogAppApi","/blogs",initParams)
       .then(response => {
@@ -66,5 +66,28 @@ export class DatabaseService {
       }).catch(error => {
       console.log(error.response);
     });
+  }
+
+  deleteBlogById(username: string, idBlog: string) : Promise<any> {
+    const myInit = {
+      headers: {},
+      body: {
+        izbrisiAvtorja: ""
+      }
+    };
+    return API.del("blogAppApi","/blogs/object/"+idBlog.split("#")[1]+"/"+idBlog.split("#")[1],myInit)
+      .then(res => {
+        // izbriši še en zapis
+        console.log("USPESNO IZBRISAN BLOG BLOG");
+        myInit.body.izbrisiAvtorja = username;
+        API.del("blogAppApi","/blogs/object/"+username+"/"+idBlog.split("#")[1],myInit)
+          .then(res => console.log("USPESNO IZBRISAN USER BLOG"))
+          .catch(error => {
+            console.log(error.response);
+          });
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
   }
 }

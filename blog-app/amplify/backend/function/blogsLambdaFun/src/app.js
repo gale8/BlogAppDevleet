@@ -65,13 +65,14 @@ app.get(path, function(req, res) {
   // REZULTATE FILTRIRAJ -> da dobis samo SEZNAM BLOGOV
   let queryParams = {
     TableName: tableName,
-    FilterExpression: 'begins_with(#pk,:val) AND begins_with(#sk,:val)',
+    FilterExpression: 'begins_with(#pk,:val1) AND begins_with(#sk,:val2)',
     ExpressionAttributeNames: {
       '#pk': 'PK',
       '#sk': 'SK'
     },
     ExpressionAttributeValues: {
-      ':val': 'BLOG#'
+      ':val1': 'USER#',
+      ':val2': 'BLOG#'
     }
   };
 
@@ -247,10 +248,18 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
     }
   }
 
+  // podaj ustrezno oznako za PK in SK!!!
+  params[sortKeyName] = "BLOG#"+req.params[sortKeyName];
+  if(req.body.izbrisiAvtorja === "")
+    params[partitionKeyName] = "BLOG#"+req.params[partitionKeyName];
+  else
+    params[partitionKeyName] = "USER#"+req.params[partitionKeyName];
+
+
   let removeItemParams = {
     TableName: tableName,
     Key: params
-  }
+  };
   dynamodb.delete(removeItemParams, (err, data)=> {
     if(err) {
       res.statusCode = 500;

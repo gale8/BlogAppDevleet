@@ -61,8 +61,21 @@ export class UrediBlogComponent implements OnInit {
       headers: {},
     };
     this.databaseService.updateBlogById(myInit)
-      .then(res => this.router.navigate(['blogi/'+this.prvotniBlog.PK]))
+      .then(res => {
+        console.log("USPESNO posodobljen blog");
+        this.router.navigate(['blogi/'+this.prvotniBlog.PK]);
+      })
       .catch(err => console.log("Napaka pri posodabljanju!! ERR: "+err))
+  }
+
+  izbrisiBlog() {
+    this.databaseService.deleteBlogById(this.prvotniBlog.avtor,this.prvotniBlog.PK)
+      .then(res => {
+        console.log("Uspesno izbrisan Blog!!");
+        // nazaj na domačo stran!!
+        this.router.navigate(['/']);
+      })
+      .catch(err => console.log("Napaka pri odstranjevanju bloga!!"));
   }
 
 }
