@@ -11,6 +11,7 @@ import {AvtentikacijaService} from "./storitve/avtentikacija.service";
 export class AppComponent implements OnInit, OnChanges{
   title = 'blog-app';
   prijavljen = false;
+  username = "";
 
   constructor(private router: Router, private avtentikacijaService: AvtentikacijaService) {}
 
@@ -37,5 +38,6 @@ export class AppComponent implements OnInit, OnChanges{
       .then(res => {
         this.prijavljen = res;
       });
+    this.avtentikacijaService.getUsername().catch().then(username => this.username = username);
   }
 }

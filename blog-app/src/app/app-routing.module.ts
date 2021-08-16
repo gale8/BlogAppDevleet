@@ -11,7 +11,7 @@ const routes: Routes = [
   {path:'prijava', component: PrijavaComponent},
   {path:'registracija', component: RegistracijaComponent},
   {path: '', component: SeznamBlogovComponent},
-  {path: 'podrobnosti', component: PodrobnostiBlogaComponent},
+  {path: 'blogi/:idBloga', component: PodrobnostiBlogaComponent},
   {path: 'kreirajBlog', component: KreiranjeBlogaComponent},
   {path: 'urediBlog', component: UrediBlogComponent}
 ];

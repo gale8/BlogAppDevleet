@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { API } from 'aws-amplify';
+import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
 
 @Component({
   selector: 'app-kreiranje-bloga',
@@ -15,15 +16,23 @@ export class KreiranjeBlogaComponent implements OnInit {
     naslov: "",
     vsebina: "",
     datum: "",
-    //avtor: "Gal Žagar" // TODO trenutno prijavljen uporabnik!!!
+    avtor: "" // trenutno prijavljen uporabnik!!!
   };
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,  private avtentikacijaService: AvtentikacijaService) { }
 
   ngOnInit(): void {
+    // preveri ce je uporabnik prijavljen
+    if(!this.avtentikacijaService.jePrijavljen())
+      this.router.navigate(['/']);
+
     var date = new Date();
     var datum = date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear();
     this.noviBlog.datum = datum;
+
+    this.avtentikacijaService.getUsername().catch()
+      .then(user => this.noviBlog["avtor"] = user);
+
   }
 
   kreirajBlog() {
@@ -36,11 +45,22 @@ export class KreiranjeBlogaComponent implements OnInit {
     };
     API.post("blogAppApi","/blogs",myInit)
       .then(response => {
-      // Add your code here
+        console.log(response);
+        // kreiraj še en vnos samo z BLOG ID:
+        var blog = {
+          PK: response.data.SK,
+          naslov: response.data.naslov,
+          vsebina: response.data.vsebina,
+          datum: response.data.datum,
+          avtor: response.data.avtor
+        };
+        myInit.body = blog;
+        API.post("blogAppApi","/blogs", myInit)
+          .then(res => this.router.navigate(['/']))
+          .catch(error => console.log(error.response));
     }).catch(error => {
         console.log(error.response);
-      });
-    this.router.navigate(['/']);
+    });
   }
 
 }

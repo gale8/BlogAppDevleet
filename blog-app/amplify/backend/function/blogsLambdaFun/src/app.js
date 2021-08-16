@@ -166,22 +166,37 @@ app.post(path, function(req, res) {
   }
 
   // nastavimo UNIQUE PK!!!
-  var pkUID = "BLOG#"+uuid.v1();
-  var skUID = pkUID;
+  var UUID = "BLOG#"+uuid.v1();
+  var pkUID = "";
+  var skUID = "";
+  // enkrat shrani blog sam, drugič pa še njegovega avtorja
+  if(req.body["PK"]){
+    pkUID = req.body.PK;
+    skUID = pkUID;
+  } else {
+    pkUID = "USER#"+req.body["avtor"];
+    skUID = UUID;
+  }
 
-  req.body["PK"] = pkUID;
-  req.body["SK"] = skUID;
+  let noviBlog = {
+    PK: pkUID,
+    SK: skUID,
+    naslov: req.body.naslov,
+    vsebina: req.body.vsebina,
+    datum: req.body.datum,
+    avtor: req.body.avtor
+  };
 
   let putItemParams = {
     TableName: tableName,
-    Item: req.body
+    Item: noviBlog
   };
   dynamodb.put(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'post call succeed!', url: req.url, data: data})
+      res.json({success: 'post call succeed!', url: req.url, data: noviBlog})
     }
   });
 });

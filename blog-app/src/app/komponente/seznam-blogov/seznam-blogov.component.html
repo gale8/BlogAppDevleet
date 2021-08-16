@@ -13,11 +13,11 @@
         <img class="img-thumbnail card-img-top" src="../../../assets/imgs/blogPicDefault.jpg" alt="Blog picture">
         <div class="card-body">
           <h4 class="card-title">{{blog.naslov}}</h4>
-          <h6 class="text-muted">on {{blog.datum}}</h6>
+          <h6 class="text-muted">by {{blog.avtor}}</h6>
           <!-- Prikaži največ 100 znakov vsebine bloga!-->
           <p *ngIf="blog.vsebina.length <= 100" class="card-text">{{blog.vsebina}}</p>
           <p *ngIf="blog.vsebina.length > 100" class="card-text">{{blog.vsebina.slice(0,100)}}...</p>
-          <a routerLink="podrobnosti" class="btn btn-primary">Podrobnosti</a>
+          <a routerLink="blogi/{{blog.PK}}" class="btn btn-primary">Podrobnosti</a>
         </div>
       </div>
     </div>

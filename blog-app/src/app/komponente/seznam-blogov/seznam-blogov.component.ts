@@ -42,9 +42,9 @@ export class SeznamBlogovComponent implements OnInit, OnChanges {
   async jePrijavljen() {
     try {
       let currentUser = await Auth.currentUserInfo();
-      console.log(currentUser);
+      //console.log(currentUser);
     } catch (err) {
-      console.log("Err retreiving current user's info: "+err);
+      //console.log("Err retreiving current user's info: "+err);
     }
   }
 }
