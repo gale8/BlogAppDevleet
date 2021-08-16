@@ -4,6 +4,7 @@ import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
 import {DatabaseService} from "../../storitve/database.service";
 import {Blog} from "../../modeli/Blog";
 import {switchMap} from "rxjs/operators";
+import { API } from 'aws-amplify';
 
 @Component({
   selector: 'app-uredi-blog',
@@ -40,6 +41,7 @@ export class UrediBlogComponent implements OnInit {
       this.avtentikacijaService.getUsername()
         .catch(err => console.log(err))
         .then(username => {
+          // preveri če uporabnik JE DEJANSKI AVTOR tega bloga!!!
           if(username !== this.prvotniBlog.avtor)
             this.router.navigate(['/']);
         });
@@ -47,7 +49,20 @@ export class UrediBlogComponent implements OnInit {
   }
 
   urediBlog() {
-
+    //console.log(this.prvotniBlog);
+    const myInit = {
+      body: {
+        PK: this.prvotniBlog.PK,
+        SK: this.prvotniBlog.SK,
+        naslov: this.prvotniBlog.naslov,
+        vsebina: this.prvotniBlog.vsebina,
+        avtor: this.prvotniBlog.avtor
+      }, // vneseni podatki!
+      headers: {},
+    };
+    this.databaseService.updateBlogById(myInit)
+      .then(res => this.router.navigate(['blogi/'+this.prvotniBlog.PK]))
+      .catch(err => console.log("Napaka pri posodabljanju!! ERR: "+err))
   }
 
 }

@@ -117,7 +117,7 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   let getItemParams = {
     TableName: tableName,
     Key: params
-  }
+  };
 
   dynamodb.get(getItemParams,(err, data) => {
     if(err) {
@@ -135,7 +135,7 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
 
 
 /************************************
-* HTTP put method for insert object *
+* HTTP put method for UPDATE object *
 *************************************/
 
 app.put(path, function(req, res) {
@@ -143,23 +143,40 @@ app.put(path, function(req, res) {
   if (userIdPresent) {
     req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   }
-
+  var pkUID = "";
+  // Spremeni oba zapisa -> avtor/blog IN blog/blog
+  if(req.body["avtor"] === ""){
+    pkUID = req.body.SK;
+  } else {
+    pkUID = "USER#"+req.body["avtor"];
+  }
+  // parametri za UPDATE --> UPDATE_EXPRESSION
   let putItemParams = {
     TableName: tableName,
-    Item: req.body
-  }
-  dynamodb.put(putItemParams, (err, data) => {
+    Key: { // ADD KEYS to alter the correct table!!!
+      "PK": pkUID,
+      "SK": req.body.SK
+    },
+    UpdateExpression: "set naslov = :n, vsebina = :v",
+    ExpressionAttributeValues: {
+      ":n": req.body.naslov,
+      ":v": req.body.vsebina
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+
+  dynamodb.update(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'put call succeed!', url: req.url, data: data})
+      res.json({success: 'update call succeed!', url: req.url, data: req.body})
     }
   });
 });
 
 /************************************
-* HTTP post method for insert object *
+* HTTP post method for insert NEW object *
 *************************************/
 
 app.post(path, function(req, res) {

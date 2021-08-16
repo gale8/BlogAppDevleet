@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { API } from 'aws-amplify';
 import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
+import {DatabaseService} from "../../storitve/database.service";
 
 @Component({
   selector: 'app-kreiranje-bloga',
@@ -19,7 +20,10 @@ export class KreiranjeBlogaComponent implements OnInit {
     avtor: "" // trenutno prijavljen uporabnik!!!
   };
 
-  constructor(private router: Router,  private avtentikacijaService: AvtentikacijaService) { }
+  constructor(private router: Router,
+              private avtentikacijaService: AvtentikacijaService,
+              private databaseService: DatabaseService
+  ) { }
 
   ngOnInit(): void {
     // preveri ce je uporabnik prijavljen
@@ -38,29 +42,9 @@ export class KreiranjeBlogaComponent implements OnInit {
   kreirajBlog() {
     // TODO filtriranje in preverjanje INPUT-a!!!
     console.log(this.noviBlog);
-    // posli podatke na streznik
-    const myInit = {
-      body: this.noviBlog, // vneseni podatki!
-      headers: {},
-    };
-    API.post("blogAppApi","/blogs",myInit)
-      .then(response => {
-        console.log(response);
-        // kreiraj še en vnos samo z BLOG ID:
-        var blog = {
-          PK: response.data.SK,
-          naslov: response.data.naslov,
-          vsebina: response.data.vsebina,
-          datum: response.data.datum,
-          avtor: response.data.avtor
-        };
-        myInit.body = blog;
-        API.post("blogAppApi","/blogs", myInit)
-          .then(res => this.router.navigate(['/']))
-          .catch(error => console.log(error.response));
-    }).catch(error => {
-        console.log(error.response);
-    });
+    this.databaseService.createNewBlog(this.noviBlog)
+      .catch(err => console.log("Napaka pri kreiranju!! ERR: "+err))
+      .then(res => this.router.navigate(['']))
   }
 
 }
