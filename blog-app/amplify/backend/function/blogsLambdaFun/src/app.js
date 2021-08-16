@@ -111,6 +111,9 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
     }
   }
 
+  params[partitionKeyName] = "BLOG#"+req.params[partitionKeyName];
+  params[sortKeyName] = "BLOG#"+req.params[sortKeyName];
+
   let getItemParams = {
     TableName: tableName,
     Key: params

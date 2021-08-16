@@ -11,9 +11,9 @@ const routes: Routes = [
   {path:'prijava', component: PrijavaComponent},
   {path:'registracija', component: RegistracijaComponent},
   {path: '', component: SeznamBlogovComponent},
-  {path: 'blogi/:idBloga', component: PodrobnostiBlogaComponent},
+  {path: 'blogi/:blogId', component: PodrobnostiBlogaComponent},
   {path: 'kreirajBlog', component: KreiranjeBlogaComponent},
-  {path: 'urediBlog', component: UrediBlogComponent}
+  {path: 'urediBlog/:blogId', component: UrediBlogComponent}
 ];
 
 @NgModule({

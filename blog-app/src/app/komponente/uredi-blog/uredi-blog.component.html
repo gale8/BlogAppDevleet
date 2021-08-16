@@ -5,11 +5,11 @@
 <form class="zacetni-obrazec mt-4" (ngSubmit)="urediBlog()">
   <div class="form-group">
     <label for="naslov"><b>Naslov</b></label>
-    <input id="naslov" class="form-control vnosno-polje" type="text" name="naslov" placeholder="Keep it short and sweet." [(ngModel)]="prvotniBlog.naslov" required/>
+    <input id="naslov" class="form-control vnosno-polje" type="text" name="naslov" value="{{prvotniBlog.naslov}}" placeholder="Keep it short and sweet." [(ngModel)]="prvotniBlog.naslov" required/>
   </div>
   <div class="form-group">
     <label for="vsebina"><b>Vsebina</b></label>
-    <textarea id="vsebina" class="form-control" name="vsebina" [(ngModel)]="prvotniBlog.vsebina" rows="10"></textarea>
+    <textarea id="vsebina" class="form-control" name="vsebina" [(ngModel)]="prvotniBlog.vsebina" rows="10">{{prvotniBlog.vsebina}}</textarea>
   </div>
   <div class="row">
     <div class="col-md-1"></div>
