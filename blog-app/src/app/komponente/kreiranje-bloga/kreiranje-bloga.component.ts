@@ -27,8 +27,11 @@ export class KreiranjeBlogaComponent implements OnInit {
 
   ngOnInit(): void {
     // preveri ce je uporabnik prijavljen
-    if(!this.avtentikacijaService.jePrijavljen())
-      this.router.navigate(['/']);
+    this.avtentikacijaService.jePrijavljen().then(res => {
+      if(!res) {
+        this.router.navigate(['/']);
+      }
+    });
 
     var date = new Date();
     var datum = date.getDate()+"."+(date.getMonth()+1)+"."+date.getFullYear();

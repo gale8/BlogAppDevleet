@@ -17,6 +17,30 @@
   <div *ngIf="jeLastnik">
     <button class="btn btn-lg btn-warning text-white mt-4" (click)="urediBlog()">Uredi blog</button>
   </div>
+  <div class="mb-4 mt-4" id="comment-section">
+    <h3 class="mb-3">Komentarji</h3>
+    <!-- Dodaj novi komentar -->
+    <div *ngIf="jePrijavljen" >
+      <form (ngSubmit)="dodajKomentar()">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-5">
+              <input class="form-control" type="text" placeholder="Napiši komentar">
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-md btn-info">Komentiraj!</button>
+            </div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- SEZNAM komentarjev -->
+    <div class="komentar mb-2 mt-2" *ngFor="let komentar of komentarji">
+      <h6>{{komentar.avtor}} <!-- <span style="right: 0" class="text-muted">on {{komentar.datum}}</span> --></h6>
+      <p>{{komentar.vsebina}}</p>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="!blog" class="alert alert-warning" role="alert">

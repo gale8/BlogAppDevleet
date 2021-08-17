@@ -49,12 +49,12 @@ export class AvtentikacijaService {
     try {
       // pridobi informacije trenutno prijavljenega uporabnika
       let currentUser = await Auth.currentUserInfo();
-      console.log(currentUser.username);
+      //console.log(currentUser.username);
       // preveri ali je prijavljen
-      if(currentUser != null)
-        return true;
-      else
+      if(currentUser == null)
         return false;
+      else
+        return true;
     } catch (err) {
       console.log("Err retreiving current user's info: "+err);
       return false;
@@ -64,6 +64,7 @@ export class AvtentikacijaService {
   async getUsername() : Promise<string> {
     try {
       let currentUser = await Auth.currentUserInfo();
+      console.log(currentUser);
       return currentUser.username;
     } catch (err) {
       console.log("Current user info ERR: "+err);

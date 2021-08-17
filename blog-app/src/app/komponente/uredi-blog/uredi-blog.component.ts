@@ -4,7 +4,7 @@ import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
 import {DatabaseService} from "../../storitve/database.service";
 import {Blog} from "../../modeli/Blog";
 import {switchMap} from "rxjs/operators";
-import { API } from 'aws-amplify';
+import {API, Auth} from 'aws-amplify';
 
 @Component({
   selector: 'app-uredi-blog',
@@ -48,8 +48,10 @@ export class UrediBlogComponent implements OnInit {
       });
   }
 
-  urediBlog() {
+  async urediBlog() {
     //console.log(this.prvotniBlog);
+    let jwt = ""
+    await Auth.currentSession().then(res => jwt = res.getAccessToken().getJwtToken());
     const myInit = {
       body: {
         PK: this.prvotniBlog.PK,

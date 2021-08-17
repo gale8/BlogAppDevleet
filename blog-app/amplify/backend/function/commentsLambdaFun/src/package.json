@@ -1,5 +1,5 @@
 {
-  "name": "blogsLambdaFun",
+  "name": "commentsLambdaFun",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,12 +9,7 @@
     "body-parser": "^1.17.1",
     "express": "^4.15.2"
   },
-  "devDependencies": {
-    "jsonwebtoken": "^8.5.1",
-    "jwk-to-pem": "^2.0.5",
-    "node-uuid": "^1.4.8",
-    "request-promise": "^4.2.6"
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

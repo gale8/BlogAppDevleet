@@ -42,7 +42,9 @@ export class SeznamBlogovComponent implements OnInit, OnChanges {
   async jePrijavljen() {
     try {
       let currentUser = await Auth.currentUserInfo();
-      //console.log(currentUser);
+      const credentials = await Auth.currentCredentials();
+
+      await Auth.currentSession().then(res => console.log(res.getAccessToken().getJwtToken()))
     } catch (err) {
       //console.log("Err retreiving current user's info: "+err);
     }

@@ -14,6 +14,14 @@ export class PodrobnostiBlogaComponent implements OnInit {
 
   blog : Blog = new Blog("","","","","","");
   jeLastnik = false;
+  jePrijavljen = false;
+
+  komentarji = [
+    {vsebina: "To je en komentar.", datum: "17.8.2021", avtor: "gale8"},
+    {vsebina: "Njusss.", datum: "11.8.2021", avtor: "andrej"},
+    {vsebina: "Baje model, kr neki basaš!", datum: "15.8.2021", avtor: "gale8"},
+    {vsebina: "Ja pa ja kreten!!", datum: "17.8.2021", avtor: "andrej"}
+  ];
 
   constructor(private pot: ActivatedRoute,
               private databaseService: DatabaseService,
@@ -22,6 +30,10 @@ export class PodrobnostiBlogaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.avtentikacijaService.jePrijavljen()
+      .then(res => this.jePrijavljen = res).catch(err => this.router.navigate(['/']));
+
     // pridobi BLOG z id-jem blogId
     this.pot.paramMap
       .pipe(
@@ -49,5 +61,10 @@ export class PodrobnostiBlogaComponent implements OnInit {
     else
       console.log("Akcija onemogočena! Nisi lastnik bloga!!!");
   }
+
+  dodajKomentar() {
+
+  }
+
 
 }

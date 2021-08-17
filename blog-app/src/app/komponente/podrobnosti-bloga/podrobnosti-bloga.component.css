@@ -1,5 +1,9 @@
-#blog {
+#blog, #comment-section{
   background: white;
   padding: 2rem 2rem;
   border-radius: 10px;
+}
+
+.komentar {
+  border-bottom: 2px solid #F4F0F7;
 }

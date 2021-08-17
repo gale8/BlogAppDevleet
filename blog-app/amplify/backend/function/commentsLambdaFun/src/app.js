@@ -13,8 +13,6 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 
-var uuid = require('node-uuid')
-
 AWS.config.update({ region: process.env.TABLE_REGION });
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -30,7 +28,7 @@ const partitionKeyType = "S";
 const sortKeyName = "SK";
 const sortKeyType = "S";
 const hasSortKey = sortKeyName !== "";
-const path = "/blogs";
+const path = "/comments";
 const UNAUTH = 'UNAUTH';
 const hashKeyPath = '/:' + partitionKeyName;
 const sortKeyPath = hasSortKey ? '/:' + sortKeyName : '';
@@ -41,14 +39,9 @@ app.use(awsServerlessExpressMiddleware.eventContext())
 
 // Enable CORS for all methods
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Access-Control-Allow-Credentials",true);
-  if ('OPTIONS' === req.method) {
-    res.send(200);
-  } else {
-    next();
-  }
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "*")
+  next()
 });
 
 // convert url string param to expected Type
@@ -65,23 +58,29 @@ const convertUrlType = (param, type) => {
  * HTTP Get method for list objects *
  ********************************/
 
-app.get(path, function(req, res) {
+app.get(path + hashKeyPath, function(req, res) {
+  var condition = {}
+  condition[partitionKeyName] = {
+    ComparisonOperator: 'EQ'
+  }
 
-  // REZULTATE FILTRIRAJ -> da dobis samo SEZNAM BLOGOV
+  if (userIdPresent && req.apiGateway) {
+    condition[partitionKeyName]['AttributeValueList'] = [req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH ];
+  } else {
+    try {
+      condition[partitionKeyName]['AttributeValueList'] = [ convertUrlType(req.params[partitionKeyName], partitionKeyType) ];
+    } catch(err) {
+      res.statusCode = 500;
+      res.json({error: 'Wrong column type ' + err});
+    }
+  }
+
   let queryParams = {
     TableName: tableName,
-    FilterExpression: 'begins_with(#pk,:val1) AND begins_with(#sk,:val2)',
-    ExpressionAttributeNames: {
-      '#pk': 'PK',
-      '#sk': 'SK'
-    },
-    ExpressionAttributeValues: {
-      ':val1': 'USER#',
-      ':val2': 'BLOG#'
-    }
-  };
+    KeyConditions: condition
+  }
 
-  dynamodb.scan(queryParams, (err, data) => {
+  dynamodb.query(queryParams, (err, data) => {
     if (err) {
       res.statusCode = 500;
       res.json({error: 'Could not load items: ' + err});
@@ -117,13 +116,10 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
     }
   }
 
-  params[partitionKeyName] = "BLOG#"+req.params[partitionKeyName];
-  params[sortKeyName] = "BLOG#"+req.params[sortKeyName];
-
   let getItemParams = {
     TableName: tableName,
     Key: params
-  };
+  }
 
   dynamodb.get(getItemParams,(err, data) => {
     if(err) {
@@ -141,49 +137,32 @@ app.get(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
 
 
 /************************************
- * HTTP put method for UPDATE object *
- *************************************/
+* HTTP put method for insert object *
+*************************************/
 
 app.put(path, function(req, res) {
 
   if (userIdPresent) {
     req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   }
-  var pkUID = "";
-  // Spremeni oba zapisa -> avtor/blog IN blog/blog
-  if(req.body["avtor"] === ""){
-    pkUID = req.body.SK;
-  } else {
-    pkUID = "USER#"+req.body["avtor"];
-  }
-  // parametri za UPDATE --> UPDATE_EXPRESSION
+
   let putItemParams = {
     TableName: tableName,
-    Key: { // ADD KEYS to alter the correct table!!!
-      "PK": pkUID,
-      "SK": req.body.SK
-    },
-    UpdateExpression: "set naslov = :n, vsebina = :v",
-    ExpressionAttributeValues: {
-      ":n": req.body.naslov,
-      ":v": req.body.vsebina
-    },
-    ReturnValues: "UPDATED_NEW"
-  };
-
-  dynamodb.update(putItemParams, (err, data) => {
+    Item: req.body
+  }
+  dynamodb.put(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'update call succeed!', url: req.url, data: req.body})
+      res.json({success: 'put call succeed!', url: req.url, data: data})
     }
   });
 });
 
 /************************************
- * HTTP post method for insert NEW object *
- *************************************/
+* HTTP post method for insert object *
+*************************************/
 
 app.post(path, function(req, res) {
 
@@ -191,45 +170,23 @@ app.post(path, function(req, res) {
     req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   }
 
-  // nastavimo UNIQUE PK!!!
-  var UUID = "BLOG#"+uuid.v1();
-  var pkUID = "";
-  var skUID = "";
-  // enkrat shrani blog sam, drugič pa še njegovega avtorja
-  if(req.body["PK"]){
-    pkUID = req.body.PK;
-    skUID = pkUID;
-  } else {
-    pkUID = "USER#"+req.body["avtor"];
-    skUID = UUID;
-  }
-
-  let noviBlog = {
-    PK: pkUID,
-    SK: skUID,
-    naslov: req.body.naslov,
-    vsebina: req.body.vsebina,
-    datum: req.body.datum,
-    avtor: req.body.avtor
-  };
-
   let putItemParams = {
     TableName: tableName,
-    Item: noviBlog
-  };
+    Item: req.body
+  }
   dynamodb.put(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'post call succeed!', url: req.url, data: noviBlog})
+      res.json({success: 'post call succeed!', url: req.url, data: data})
     }
   });
 });
 
 /**************************************
- * HTTP remove method to delete object *
- ***************************************/
+* HTTP remove method to delete object *
+***************************************/
 
 app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   var params = {};
@@ -237,7 +194,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
     params[partitionKeyName] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   } else {
     params[partitionKeyName] = req.params[partitionKeyName];
-    try {
+     try {
       params[partitionKeyName] = convertUrlType(req.params[partitionKeyName], partitionKeyType);
     } catch(err) {
       res.statusCode = 500;
@@ -253,18 +210,10 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
     }
   }
 
-  // podaj ustrezno oznako za PK in SK!!!
-  params[sortKeyName] = "BLOG#"+req.params[sortKeyName];
-  if(req.body.izbrisiAvtorja === "")
-    params[partitionKeyName] = "BLOG#"+req.params[partitionKeyName];
-  else
-    params[partitionKeyName] = "USER#"+req.params[partitionKeyName];
-
-
   let removeItemParams = {
     TableName: tableName,
     Key: params
-  };
+  }
   dynamodb.delete(removeItemParams, (err, data)=> {
     if(err) {
       res.statusCode = 500;
@@ -275,7 +224,7 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
   });
 });
 app.listen(3000, function() {
-  console.log("App started")
+    console.log("App started")
 });
 
 // Export the app object. When executing the application local this does nothing. However,
