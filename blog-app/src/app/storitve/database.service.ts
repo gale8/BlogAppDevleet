@@ -126,17 +126,23 @@ export class DatabaseService {
           headers: {},
           response: true
         };
-        await API.get("blogApiApp","/comments/COMMENT%23"+commTab[i].SK.split("#")[1],myInit)
-          .then(comments => {
+        //console.log(commTab[i].SK);
+        await API.get("blogAppApi","/comments/COMMENT%23"+commTab[i].SK.split("#")[1],myInit)
+          .then(res => {
+            var comments = res.data;
             // dobim PODKOMENTARJE enega komentarja!!!
             // podkomentarje dodaj na ustrezno mesto v glevni tabeli!
             for(var j = 0; j<comments.length; j++) {
-              this.addCommentToTab(comments[i],commTab[i].PK,glavnaTabKomentarjev);
+              //console.log(comments[j]);
+              this.addCommentToTab(comments[j],commTab[j].SK,glavnaTabKomentarjev);
             }
             // dig deeper
             return this.getAllComments(glavnaTabKomentarjev,comments);
           })
-          .catch(err => {return [];});
+          .catch(err => {
+            console.log(err);
+            return [];
+          });
       }
       return [];
     }
@@ -146,7 +152,7 @@ export class DatabaseService {
     if(glavnaTabKomentarjev == []) return;
     else {
       for (var i = 0; i<glavnaTabKomentarjev.length; i++) {
-        if(glavnaTabKomentarjev[i].PK == newComment.SK) {
+        if(glavnaTabKomentarjev[i].SK == newComment.PK) {
           let noviKomentar = new Komentar(newComment.PK,newComment.SK,newComment.vsebina,newComment.upvotes,newComment.avtor,[]);
           glavnaTabKomentarjev[i].komentarji.push(noviKomentar);
           return;

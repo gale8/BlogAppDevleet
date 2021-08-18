@@ -7,3 +7,7 @@
 .komentar {
   border-bottom: 4px solid #F4F0F7;
 }
+.indent {
+  border-left: 4px solid #F4F0F7;
+  padding-left: 10px;
+}

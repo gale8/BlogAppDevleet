@@ -6,6 +6,7 @@ import {DatabaseService} from "../../storitve/database.service";
 import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
 import {Komentar} from "../../modeli/Komentar";
 import {Auth} from "aws-amplify";
+import {main} from "@angular/compiler-cli/src/main";
 
 @Component({
   selector: 'app-podrobnosti-bloga',
@@ -95,10 +96,10 @@ export class PodrobnostiBlogaComponent implements OnInit {
 
     this.databaseService.createComment(this.noviKomentar)
       .then(comment => {
-        console.log(comment);
+        //console.log(comment);
         // dodaj novi comment v tabelo
         let novi = new Komentar(comment.PK, comment.SK, comment.vsebina, comment.upvotes, comment.avtor, []);
-        this.mainCommentTable.unshift(novi);
+        this.mainCommentTable.push(novi);
       }).catch(err => console.log(err));
 
   }
@@ -109,11 +110,12 @@ export class PodrobnostiBlogaComponent implements OnInit {
     this.noviPodKomentar.PK = pk;
     // dodaj avtorja
     await this.avtentikacijaService.getUsername().then(username => this.noviPodKomentar.avtor = username).catch(err => console.log(err));
-    console.log(this.noviPodKomentar);
+    //console.log(this.noviPodKomentar);
 
     this.databaseService.createComment(this.noviPodKomentar)
       .then(comment => {
-        console.log(comment);
+        this.noviPodKomentar.vsebina = "";
+        this.databaseService.addCommentToTab(comment,comment.PK,this.mainCommentTable);
       }).catch(err => console.log(err));
   }
 

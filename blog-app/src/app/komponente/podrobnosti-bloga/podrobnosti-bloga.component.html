@@ -36,24 +36,31 @@
       </form>
     </div>
     <!-- SEZNAM komentarjev -->
-    <div class="komentar mb-2 mt-2" *ngFor="let komentar of mainCommentTable">
-      <h6>{{komentar.avtor}} <!-- <span style="right: 0" class="text-muted">on {{komentar.datum}}</span> --></h6>
-      <p>{{komentar.vsebina}}</p>
-      <form (ngSubmit)="dodajPodKomentar($event)">
-        <div class="form-group">
-          <div class="row">
-            <input type="text" name="komentarId" value="{{komentar.SK}}" hidden>
-            <div class="col-md-3">
-              <input class="form-control" type="text" name="komentar" [(ngModel)]="noviPodKomentar.vsebina" placeholder="Napiši podkomentar">
+    <ng-template #recursiveList let-mainCommentTable>
+      <div class="komentar mb-2 mt-2" *ngFor="let komentar of mainCommentTable">
+        <h6>{{komentar.avtor}} <!-- <span style="right: 0" class="text-muted">on {{komentar.datum}}</span> --></h6>
+        <p>{{komentar.vsebina}}</p>
+        <form (ngSubmit)="dodajPodKomentar($event)">
+          <div class="form-group">
+            <div class="row">
+              <input type="text" name="komentarId" value="{{komentar.SK}}" hidden>
+              <div class="col-md-3">
+                <input class="form-control" type="text" name="komentar" [(ngModel)]="noviPodKomentar.vsebina" placeholder="Napiši podkomentar">
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="btn btn-sm btn-info">Dodaj!</button>
+              </div>
+              <div class="col-md-7"></div>
             </div>
-            <div class="col-md-2">
-              <button type="submit" class="btn btn-sm btn-info">Dodaj!</button>
-            </div>
-            <div class="col-md-7"></div>
           </div>
+        </form>
+        <!-- poglej ce ima podkomentarje! -->
+        <div class="ml-5 indent" *ngIf="komentar.komentarji.length > 0">
+          <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: komentar.komentarji }"></ng-container>
         </div>
-      </form>
-    </div>
+      </div>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: mainCommentTable }"></ng-container>
   </div>
 </div>
 
