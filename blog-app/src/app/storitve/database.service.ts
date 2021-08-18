@@ -158,7 +158,7 @@ export class DatabaseService {
     }
   }
 
-  createComment(comment: any, jwt: any) : Promise<any> {
+  createComment(comment: any) : Promise<any> {
     //console.log(jwt);
     // posli podatke na streznik
     const myInit = {

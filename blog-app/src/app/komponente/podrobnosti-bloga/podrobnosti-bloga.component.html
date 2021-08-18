@@ -39,15 +39,15 @@
     <div class="komentar mb-2 mt-2" *ngFor="let komentar of mainCommentTable">
       <h6>{{komentar.avtor}} <!-- <span style="right: 0" class="text-muted">on {{komentar.datum}}</span> --></h6>
       <p>{{komentar.vsebina}}</p>
-      <form (ngSubmit)="dodajPodKomentar()">
+      <form (ngSubmit)="dodajPodKomentar($event)">
         <div class="form-group">
           <div class="row">
-            <input type="text" name="komentarId" [(ngModel)]="noviPodKomentar.PK" value="{{komentar.SK}}" hidden>
+            <input type="text" name="komentarId" value="{{komentar.SK}}" hidden>
             <div class="col-md-3">
               <input class="form-control" type="text" name="komentar" [(ngModel)]="noviPodKomentar.vsebina" placeholder="Napiši podkomentar">
             </div>
             <div class="col-md-2">
-              <button type="submit" class="btn btn-sm btn-info">Dodaj! </button>
+              <button type="submit" class="btn btn-sm btn-info">Dodaj!</button>
             </div>
             <div class="col-md-7"></div>
           </div>

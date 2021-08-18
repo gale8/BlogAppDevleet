@@ -27,6 +27,8 @@ export class PodrobnostiBlogaComponent implements OnInit {
     avtor: ""
   };
 
+  skID = "";
+
   noviPodKomentar = {
     PK: "",
     vsebina: "",
@@ -91,7 +93,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
       jwt = res.getAccessToken().getJwtToken();
     });
 
-    this.databaseService.createComment(this.noviKomentar,jwt)
+    this.databaseService.createComment(this.noviKomentar)
       .then(comment => {
         console.log(comment);
         // dodaj novi comment v tabelo
@@ -101,10 +103,18 @@ export class PodrobnostiBlogaComponent implements OnInit {
 
   }
 
-  async dodajPodKomentar() {
+  async dodajPodKomentar(event: any) {
+    // get PK of parent comment!!!
+    const pk = event.target.komentarId.value;
+    this.noviPodKomentar.PK = pk;
     // dodaj avtorja
     await this.avtentikacijaService.getUsername().then(username => this.noviPodKomentar.avtor = username).catch(err => console.log(err));
     console.log(this.noviPodKomentar);
+
+    this.databaseService.createComment(this.noviPodKomentar)
+      .then(comment => {
+        console.log(comment);
+      }).catch(err => console.log(err));
   }
 
 
