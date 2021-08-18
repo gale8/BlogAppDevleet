@@ -25,7 +25,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
   noviKomentar = {
     PK: "",
     vsebina: "",
-    upvotes: 0,
+    upvotes: [],
     avtor: ""
   };
 
@@ -34,7 +34,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
   noviPodKomentar = {
     PK: "",
     vsebina: "",
-    upvotes: 0,
+    upvotes: [],
     avtor: ""
   };
 
@@ -54,17 +54,17 @@ export class PodrobnostiBlogaComponent implements OnInit {
       .pipe(
         switchMap((params: ParamMap) => {
           const id = params.get('blogId');
-          console.log(id);
+          //console.log(id);
           return this.databaseService.getBlogById(id!);
         }))
       .subscribe((blog: Blog) => {
         this.blog = blog;
-        console.log(blog);
+        //console.log(blog);
         // PRIDOBI VSE KOMENTARJE BLOGA!!
         this.databaseService.getComments(this.blog.PK)
           .catch()
           .then(comments => {
-            console.log(comments);
+            //console.log(comments);
             this.mainCommentTable = comments
           });
         // preveri če je trenutno prijavljeni uporabnik avtor bloga!!!
@@ -117,12 +117,74 @@ export class PodrobnostiBlogaComponent implements OnInit {
       }).catch(err => console.log(err));
   }
 
-  urediKomentar() {
+  upvote(pk:string, sk:string) {
+    var PK = pk.split("#")[0]+"%23"+pk.split("#")[1];
+    var SK = sk.split("#")[0]+"%23"+sk.split("#")[1];
 
+    this.glasuj(PK,SK,1);
   }
 
-  izbrisiKomentar() {
+  downvote(pk:string, sk:string) {
+    var PK = pk.split("#")[0]+"%23"+pk.split("#")[1];
+    var SK = sk.split("#")[0]+"%23"+sk.split("#")[1];
 
+    this.glasuj(PK,SK,-1);
+  }
+
+  glasuj(PK: string, SK: string, glas: number) {
+    var jeGlasoval = false;
+    // get comment
+    this.databaseService.getCommentById(PK,SK)
+      .catch(err => console.log(err))
+      .then(res => {
+        var komentar = res as Komentar;
+        // poglej če je avtor že upvote-al ta komentar!
+        for (var i = 0; i<komentar.upvotes.length; i++) {
+          var vote = komentar.upvotes[i];
+          if(vote.avtor == this.trenutniPrijavljen && vote.vote == 1){
+            jeGlasoval = true;
+            var novi = {
+              avtor: vote.avtor,
+              vote: 0
+            };
+            // odstrani element
+            komentar.upvotes.splice(i,i+1);
+            komentar.upvotes.push(novi);
+            break;
+          }
+        }
+        if(!jeGlasoval) {
+          var noviGlas = {
+            avtor: this.trenutniPrijavljen,
+            vote: glas
+          };
+          // dodaj glas če oseba še ni glasovala!
+          komentar.upvotes.push(noviGlas);
+          console.log(komentar.upvotes)
+        }
+        // UPDATE votes table!
+        this.databaseService.updateCommentVote(komentar)
+          .catch(err => console.log(err))
+          .then(res => {
+            // PRIDOBI VSE KOMENTARJE BLOGA!!
+            this.databaseService.getComments(this.blog.PK)
+              .catch()
+              .then(comments => {
+                //console.log(comments);
+                this.mainCommentTable = comments
+              });
+          });
+      });
+  }
+
+
+  // fun izracuna st. glasov za VSAK komentar!!
+  vrniStGlasov(votesTab: any[]) {
+    var vsotaGlasov = 0;
+    for (var i = 0; i<votesTab.length; i++) {
+      vsotaGlasov += votesTab[i].vote;
+    }
+    return vsotaGlasov;
   }
 
 

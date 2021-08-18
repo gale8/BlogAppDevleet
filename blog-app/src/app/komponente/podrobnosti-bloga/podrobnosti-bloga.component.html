@@ -38,7 +38,14 @@
     <!-- SEZNAM komentarjev -->
     <ng-template #recursiveList let-mainCommentTable>
       <div class="komentar mb-2 mt-2" *ngFor="let komentar of mainCommentTable">
-        <h6>{{komentar.avtor}} <!-- <span style="right: 0" class="text-muted">on {{komentar.datum}}</span> --></h6>
+        <div>
+          <h6>{{komentar.avtor}}</h6>
+          <div>
+            <i class="fas fa-arrow-alt-circle-down mr-1" (click)="downvote(komentar.PK,komentar.SK)"></i>
+            <span>{{vrniStGlasov(komentar.upvotes)}}</span>
+            <i class="fas fa-arrow-alt-circle-up ml-1" (click)="upvote(komentar.PK,komentar.SK)"></i>
+          </div>
+        </div>
         <p>{{komentar.vsebina}}</p>
         <div class="row">
           <form class="col-md-4" (ngSubmit)="dodajPodKomentar($event)">

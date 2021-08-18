@@ -15,7 +15,7 @@ export class UrediKomentarComponent implements OnInit {
 
   naslov = "Uredi komentar";
 
-  prvotniKomentar = new Komentar("","","",0,"",[]);
+  prvotniKomentar = new Komentar("","","",[],"",[]);
 
   constructor(private router: Router,
               private avtentikacijaService: AvtentikacijaService,

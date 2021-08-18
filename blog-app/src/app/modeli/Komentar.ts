@@ -2,11 +2,11 @@ export class Komentar {
   PK: string;
   SK: string;
   vsebina: string;
-  upvotes: number;
+  upvotes: any[];
   avtor: string;
   komentarji: Komentar[];
 
-  constructor(pk: string, sk: string, v: string, u: number, a: string, k: Komentar[]) {
+  constructor(pk: string, sk: string, v: string, u: any[], a: string, k: Komentar[]) {
     this.PK = pk;
     this.SK = sk;
     this.vsebina = v;

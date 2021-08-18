@@ -248,5 +248,19 @@ export class DatabaseService {
     }
   }
 
+  async updateCommentVote(komentar: Komentar) : Promise<any> {
+    // pridobi JWT zeton
+    let jwt = "";
+    await Auth.currentSession().then(res => { jwt = res.getAccessToken().getJwtToken(); });
 
+    const myInit = {
+      headers: {
+        "X-Api-Key": jwt
+      },
+      body: komentar
+    };
+    return API.put("blogAppApi","/comments/vote",myInit)
+      .catch(err => console.log(err))
+      .then(res => res.data);
+  }
 }

@@ -221,6 +221,45 @@ app.put(path, function(req, res) {
 });
 
 /************************************
+ * HTTP put method for insert object *
+ *************************************/
+
+app.put(path+"/vote", function(req, res) {
+
+  if (userIdPresent) {
+    req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
+  }
+  var token = req.get("X-Api-Key");
+  var decodedToken = decodeJWT(token);
+
+  /* preveri, če ureja komentar njegov avtor:
+  if(decodedToken.payload.username !== req.body.avtor) {
+    return res.json({statusCode: 403, error: "Unauthorized"});
+  }*/
+
+  let putItemParams = {
+    TableName: tableName,
+    Key: {
+      "PK": req.body.PK,
+      "SK": req.body.SK
+    },
+    UpdateExpression: 'set upvotes = :v',
+    ExpressionAttributeValues: {
+      ":v" : req.body.upvotes
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+  dynamodb.update(putItemParams, (err, data) => {
+    if(err) {
+      res.statusCode = 500;
+      res.json({error: err, url: req.url, body: req.body});
+    } else{
+      res.json({success: 'put call succeed!', url: req.url, data: data})
+    }
+  });
+});
+
+/************************************
 * HTTP post method for insert NEW object *
 *************************************/
 
