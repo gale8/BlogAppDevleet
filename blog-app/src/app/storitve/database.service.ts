@@ -90,4 +90,26 @@ export class DatabaseService {
         console.log(error.response);
       });
   }
+
+  /* ------------------- */
+  /*     KOMENTARJI      */
+  /* ------------------- */
+
+  createComment(comment: any, jwt: any) : Promise<any> {
+    //console.log(jwt);
+    // posli podatke na streznik
+    const myInit = {
+      body: comment, // vneseni podatki!
+      headers: {
+        //"X-Api-Key": jwt
+      },
+    };
+    return API.post("blogAppApi","/comments",myInit)
+      .then(response => {
+        console.log(response);
+        return response.data
+      }).catch(error => {
+        console.log(error.response);
+      });
+  }
 }

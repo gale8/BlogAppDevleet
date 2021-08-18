@@ -13,6 +13,12 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 
+var uuid = require('uuid');
+// JWT dependencies
+var jwt = require('jsonwebtoken');
+var jwkToPem = require('jwk-to-pem');
+const rp = require('request-promise');
+
 AWS.config.update({ region: process.env.TABLE_REGION });
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -39,9 +45,14 @@ app.use(awsServerlessExpressMiddleware.eventContext())
 
 // Enable CORS for all methods
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "*")
-  next()
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Credentials",true);
+  if ('OPTIONS' === req.method) {
+    res.send(200);
+  } else {
+    next();
+  }
 });
 
 // convert url string param to expected Type
@@ -54,9 +65,46 @@ const convertUrlType = (param, type) => {
   }
 }
 
-/********************************
- * HTTP Get method for list objects *
- ********************************/
+// function returns VERIFIED JWT!!
+function verifyJWT(token) {
+  const param = {
+    method: "GET",
+    uri: "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_zQDYnTlws/.well-known/jwks.json",
+    json: true
+  };
+  rp(param)
+    .then(function (jwkArr) {
+      // poisci ustrezen public key na podlagi KID!!
+      for (var i = 0; i<jwkArr.keys.length; i++) {
+        if(jwkArr.keys[i].kid === token.header.kid){
+          // get PEM
+          const pem = jwkToPem(jwkArr.keys[i]);
+          // VERIFY TOKEN:
+          jwt.verify(token, pem, { algorithms: ['RS256'] }, function(err, decodedToken) {
+            if (err) {
+              console.log("ERRRRROR");
+              return false;
+            }
+            else{
+              // VRNI DEKODIRAN ŽETON!
+              return decodedToken;
+            }
+          });
+        }
+      }
+    })
+    .catch(function (err) {
+      // API call failed...
+      console.log("ERR");
+    });
+}
+
+// function returns DECODED JWT!!
+function decodeJWT(token) {
+  var decodedJwt = jwt.decode(token,{complete: true});
+  // dekodiran zeton!
+  return decodedJwt;
+}
 
 app.get(path + hashKeyPath, function(req, res) {
   var condition = {}
@@ -161,7 +209,7 @@ app.put(path, function(req, res) {
 });
 
 /************************************
-* HTTP post method for insert object *
+* HTTP post method for insert NEW object *
 *************************************/
 
 app.post(path, function(req, res) {
@@ -169,17 +217,31 @@ app.post(path, function(req, res) {
   if (userIdPresent) {
     req.body['userId'] = req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH;
   }
+  // get JWT from HEADER!
+  //var jwtUser = req.get("X-Api-Key");
+
+  // generate SK
+  var sk = "COMMENT#"+uuid.v1();
+
+  var newComment = {
+    PK: req.body.PK,
+    SK: sk,
+    vsebina: req.body.vsebina,
+    avtor: req.body.avtor,
+    upvotes: req.body.upvotes
+  };
 
   let putItemParams = {
     TableName: tableName,
-    Item: req.body
-  }
+    Item: newComment
+  };
+
   dynamodb.put(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});
     } else{
-      res.json({success: 'post call succeed!', url: req.url, data: data})
+      res.json({success: 'post call succeed!', url: req.url, data: newComment})
     }
   });
 });
