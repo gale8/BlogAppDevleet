@@ -68,7 +68,19 @@ export class UrediKomentarComponent implements OnInit {
   }
 
   izbrisiKomentar() {
-
+    this.prvotniKomentar.komentarji = [];
+    this.databaseService.getCommentChain([this.prvotniKomentar])
+      .catch(err => console.log(err))
+      .then(res => {
+        var commentChain = res as Komentar[];
+        // izbrisi komentarje ki so v vrnjeni tabeli!!
+        this.databaseService.deleteComments(commentChain)
+          .catch(err => console.log(err))
+          .then(res => {
+            console.log("Uspesno izbrisan comment chain!");
+            this.router.navigate(["/"]);
+          });
+      });
   }
 
 }

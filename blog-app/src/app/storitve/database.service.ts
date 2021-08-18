@@ -130,11 +130,11 @@ export class DatabaseService {
         await API.get("blogAppApi","/comments/COMMENT%23"+commTab[i].SK.split("#")[1],myInit)
           .then(res => {
             var comments = res.data;
+            console.log(comments);
             // dobim PODKOMENTARJE enega komentarja!!!
             // podkomentarje dodaj na ustrezno mesto v glevni tabeli!
             for(var j = 0; j<comments.length; j++) {
-              //console.log(comments[j]);
-              this.addCommentToTab(comments[j],commTab[j].SK,glavnaTabKomentarjev);
+              this.addCommentToTab(comments[j],comments[j].PK,glavnaTabKomentarjev);
             }
             // dig deeper
             return this.getAllComments(glavnaTabKomentarjev,comments);
@@ -206,5 +206,38 @@ export class DatabaseService {
       .catch(err => console.log(err))
       .then(res => res.data);
   }
+
+  // funkcija pripravi tabelo komentarjev primernih za izbris!
+  async getCommentChain(mainCommentTab : Komentar[]) {
+    var glavnaTabKomentarjev: Komentar[] = mainCommentTab;
+    // sprehodi se skozi glavne komentarje in jih dodaj v tab
+    await this.getAllComments(glavnaTabKomentarjev,mainCommentTab);
+    return glavnaTabKomentarjev;
+  }
+
+  // fun za izbris COMMENT CHAIN-a!
+  async deleteComments(commentChainArr: Komentar[]) : Promise<any>{
+    if(commentChainArr == []) return;
+    else {
+      for (var i = 0; i<commentChainArr.length; i++) {
+        const myInit = {
+          headers:{
+            // API KEY
+          }
+        };
+        // set PK and SK:
+        var pk = commentChainArr[i].PK.split("#")[0]+"%23"+commentChainArr[i].PK.split("#")[1];
+        var sk = commentChainArr[i].SK.split("#")[0]+"%23"+commentChainArr[i].SK.split("#")[1];
+        // izbriši komentarje
+        await API.del("blogAppApi","/comments/object/"+pk+"/"+sk,myInit)
+          .catch(err => console.log(err))
+          .then(res => {
+            // dig deeper
+            this.deleteComments(commentChainArr[i].komentarji);
+          });
+      }
+    }
+  }
+
 
 }
