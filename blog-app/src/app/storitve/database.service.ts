@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { API } from 'aws-amplify';
 import {Blog} from "../modeli/Blog";
+import {Komentar} from "../modeli/Komentar";
 @Injectable({
   providedIn: 'root'
 })
@@ -94,6 +95,68 @@ export class DatabaseService {
   /* ------------------- */
   /*     KOMENTARJI      */
   /* ------------------- */
+
+  async getComments(blogId: string) : Promise<any> {
+    const myInit = {
+      headers: {},
+      response: true
+    };
+
+    let vsiKomentarji : Komentar[] = [];
+
+    await API.get("blogAppApi","/comments/BLOG%23"+blogId.split("#")[1],myInit)
+      .then(res => {
+        var comments = res.data;
+        // dodaj glevne komentarje v tabelo!!
+        for(var i = 0; i<comments.length; i++) {
+          vsiKomentarji[i] = new Komentar(comments[i].PK,comments[i].SK,comments[i].vsebina,comments[i].upvotes,comments[i].avtor,[]);
+        }
+        this.getAllComments(vsiKomentarji,comments);
+      })
+      .catch(err => err.response);
+
+    return vsiKomentarji;
+  }
+  // rekurzivna funkcija za pridobivanje VSEH komentarjev bloga!!
+  async getAllComments(glavnaTabKomentarjev: any[], commTab: any[]) : Promise<any[]> {
+    if(commTab == null) return [];
+    else {
+      for (var i = 0; i<commTab.length; i++){
+        const myInit = {
+          headers: {},
+          response: true
+        };
+        await API.get("blogApiApp","/comments/COMMENT%23"+commTab[i].SK.split("#")[1],myInit)
+          .then(comments => {
+            // dobim PODKOMENTARJE enega komentarja!!!
+            // podkomentarje dodaj na ustrezno mesto v glevni tabeli!
+            for(var j = 0; j<comments.length; j++) {
+              this.addCommentToTab(comments[i],commTab[i].PK,glavnaTabKomentarjev);
+            }
+            // dig deeper
+            return this.getAllComments(glavnaTabKomentarjev,comments);
+          })
+          .catch(err => {return [];});
+      }
+      return [];
+    }
+  }
+  // funkcija za dodajanje komentarja na ustrezno mesto v tabeli!!
+  addCommentToTab(newComment: any, parentCommentPk: string, glavnaTabKomentarjev: any) : void {
+    if(glavnaTabKomentarjev == []) return;
+    else {
+      for (var i = 0; i<glavnaTabKomentarjev.length; i++) {
+        if(glavnaTabKomentarjev[i].PK == newComment.SK) {
+          let noviKomentar = new Komentar(newComment.PK,newComment.SK,newComment.vsebina,newComment.upvotes,newComment.avtor,[]);
+          glavnaTabKomentarjev[i].komentarji.push(noviKomentar);
+          return;
+        }else {
+          // dig deeper:
+          this.addCommentToTab(newComment,parentCommentPk,glavnaTabKomentarjev[i].komentarji);
+        }
+      }
+    }
+  }
 
   createComment(comment: any, jwt: any) : Promise<any> {
     //console.log(jwt);

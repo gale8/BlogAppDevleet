@@ -106,29 +106,26 @@ function decodeJWT(token) {
   return decodedJwt;
 }
 
+/*****************************************
+ * HTTP Get method for get ALL objects   *
+ *****************************************/
 app.get(path + hashKeyPath, function(req, res) {
-  var condition = {}
-  condition[partitionKeyName] = {
-    ComparisonOperator: 'EQ'
-  }
 
-  if (userIdPresent && req.apiGateway) {
-    condition[partitionKeyName]['AttributeValueList'] = [req.apiGateway.event.requestContext.identity.cognitoIdentityId || UNAUTH ];
-  } else {
-    try {
-      condition[partitionKeyName]['AttributeValueList'] = [ convertUrlType(req.params[partitionKeyName], partitionKeyType) ];
-    } catch(err) {
-      res.statusCode = 500;
-      res.json({error: 'Wrong column type ' + err});
-    }
-  }
-
+  console.log(req.params.PK);
   let queryParams = {
     TableName: tableName,
-    KeyConditions: condition
-  }
+    FilterExpression: '#pk=:val1 AND begins_with(#sk,:val2)',
+    ExpressionAttributeNames: {
+      '#pk': 'PK',
+      '#sk': 'SK'
+    },
+    ExpressionAttributeValues: {
+      ':val1': req.params.PK,
+      ':val2': 'COMMENT#'
+    }
+  };
 
-  dynamodb.query(queryParams, (err, data) => {
+  dynamodb.scan(queryParams, (err, data) => {
     if (err) {
       res.statusCode = 500;
       res.json({error: 'Could not load items: ' + err});

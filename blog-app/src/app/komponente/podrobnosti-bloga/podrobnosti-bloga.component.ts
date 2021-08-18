@@ -18,16 +18,16 @@ export class PodrobnostiBlogaComponent implements OnInit {
   jeLastnik = false;
   jePrijavljen = false;
 
-  komentarji = [
-    {vsebina: "To je en komentar.", avtor: "gale8"},
-    {vsebina: "Njusss.", datum: "11.8.2021", avtor: "andrej"},
-    {vsebina: "Baje model, kr neki basaš!", avtor: "gale8"},
-    {vsebina: "Ja pa ja kreten!!", avtor: "andrej"}
-  ];
-
   mainCommentTable : Komentar[] = []; // glavna tabela komentarjev, ki pripadajo blogu!!!
 
   noviKomentar = {
+    PK: "",
+    vsebina: "",
+    upvotes: 0,
+    avtor: ""
+  };
+
+  noviPodKomentar = {
     PK: "",
     vsebina: "",
     upvotes: 0,
@@ -56,6 +56,13 @@ export class PodrobnostiBlogaComponent implements OnInit {
       .subscribe((blog: Blog) => {
         this.blog = blog;
         console.log(blog);
+        // PRIDOBI VSE KOMENTARJE BLOGA!!
+        this.databaseService.getComments(this.blog.PK)
+          .catch()
+          .then(comments => {
+            console.log(comments);
+            this.mainCommentTable = comments
+          });
         // preveri če je trenutno prijavljeni uporabnik avtor bloga!!!
         this.avtentikacijaService.getUsername()
           .catch(err => console.log(err))
@@ -92,6 +99,12 @@ export class PodrobnostiBlogaComponent implements OnInit {
         this.mainCommentTable.unshift(novi);
       }).catch(err => console.log(err));
 
+  }
+
+  async dodajPodKomentar() {
+    // dodaj avtorja
+    await this.avtentikacijaService.getUsername().then(username => this.noviPodKomentar.avtor = username).catch(err => console.log(err));
+    console.log(this.noviPodKomentar);
   }
 
 
