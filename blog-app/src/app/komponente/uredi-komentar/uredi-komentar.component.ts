@@ -67,14 +67,18 @@ export class UrediKomentarComponent implements OnInit {
       });
   }
 
-  izbrisiKomentar() {
+  async izbrisiKomentar() {
+    // pridobi JWT zeton
+    let jwt = "";
+    await Auth.currentSession().then(res => { jwt = res.getAccessToken().getJwtToken(); });
+
     this.prvotniKomentar.komentarji = [];
     this.databaseService.getCommentChain([this.prvotniKomentar])
       .catch(err => console.log(err))
       .then(res => {
         var commentChain = res as Komentar[];
         // izbrisi komentarje ki so v vrnjeni tabeli!!
-        this.databaseService.deleteComments(commentChain)
+        this.databaseService.deleteComments(commentChain,jwt,commentChain[0].avtor)
           .catch(err => console.log(err))
           .then(res => {
             console.log("Uspesno izbrisan comment chain!");

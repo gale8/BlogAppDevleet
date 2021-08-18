@@ -55,7 +55,7 @@
             </div>
           </form>
           <div class="col-md-2 padding-left-zero">
-            <b><a routerLink="/urediKomentar/{{komentar.PK+komentar.SK}}">Uredi</a></b>
+            <b *ngIf="trenutniPrijavljen == komentar.avtor"><a routerLink="/urediKomentar/{{komentar.PK+komentar.SK}}">Uredi</a></b>
           </div>
           <div class="col-md-6"></div>
         </div>

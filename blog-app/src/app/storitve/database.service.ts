@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { API } from 'aws-amplify';
+import {API, Auth} from 'aws-amplify';
 import {Blog} from "../modeli/Blog";
 import {Komentar} from "../modeli/Komentar";
 @Injectable({
@@ -195,10 +195,14 @@ export class DatabaseService {
       });
   }
 
-  updateCommentById(komentar: Komentar) : Promise<any> {
+  async updateCommentById(komentar: Komentar) : Promise<any> {
+    // pridobi JWT zeton
+    let jwt = "";
+    await Auth.currentSession().then(res => { jwt = res.getAccessToken().getJwtToken(); });
+
     const myInit = {
       headers: {
-        //"X-Api-Key": jwt
+        "X-Api-Key": jwt
       },
       body: komentar
     };
@@ -216,13 +220,18 @@ export class DatabaseService {
   }
 
   // fun za izbris COMMENT CHAIN-a!
-  async deleteComments(commentChainArr: Komentar[]) : Promise<any>{
+  async deleteComments(commentChainArr: Komentar[], jwt: string, avtorKomentarja: string) : Promise<any>{
+    console.log(avtorKomentarja);
     if(commentChainArr == []) return;
     else {
       for (var i = 0; i<commentChainArr.length; i++) {
         const myInit = {
           headers:{
             // API KEY
+            "X-Api-Key": jwt
+          },
+          body:{
+            avtorKomentarja: avtorKomentarja
           }
         };
         // set PK and SK:
@@ -233,7 +242,7 @@ export class DatabaseService {
           .catch(err => console.log(err))
           .then(res => {
             // dig deeper
-            this.deleteComments(commentChainArr[i].komentarji);
+            this.deleteComments(commentChainArr[i].komentarji,jwt, avtorKomentarja);
           });
       }
     }

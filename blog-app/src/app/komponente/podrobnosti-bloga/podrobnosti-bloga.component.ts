@@ -18,6 +18,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
   blog : Blog = new Blog("","","","","","");
   jeLastnik = false;
   jePrijavljen = false;
+  trenutniPrijavljen = "";
 
   mainCommentTable : Komentar[] = []; // glavna tabela komentarjev, ki pripadajo blogu!!!
 
@@ -70,6 +71,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
         this.avtentikacijaService.getUsername()
           .catch(err => console.log(err))
           .then(username => {
+            this.trenutniPrijavljen = username as string;
             if(username === blog.avtor)
               this.jeLastnik = true;
           });
@@ -88,11 +90,6 @@ export class PodrobnostiBlogaComponent implements OnInit {
     // dodaj avtorja
     await this.avtentikacijaService.getUsername().then(username => this.noviKomentar.avtor = username).catch(err => console.log(err));
     this.noviKomentar.PK = this.blog.PK;
-    // pridobi JWT zeton
-    let jwt = "";
-    await Auth.currentSession().then(res => {
-      jwt = res.getAccessToken().getJwtToken();
-    });
 
     this.databaseService.createComment(this.noviKomentar)
       .then(comment => {
