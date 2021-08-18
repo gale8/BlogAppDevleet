@@ -24,6 +24,10 @@ export class UrediKomentarComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // najprej preveri, če je uporabnik prijavljen!
+    if(!this.avtentikacijaService.jePrijavljen())
+      this.router.navigate(['prijava']);
+
     // pridobi komentar iz pb!
     this.pot.paramMap
       .pipe(
@@ -41,14 +45,26 @@ export class UrediKomentarComponent implements OnInit {
           return this.databaseService.getCommentById(pk,sk);
         })
       ).subscribe(comment => {
-        console.log(comment);
-        this.prvotniKomentar = comment;
+      console.log(comment);
+      this.prvotniKomentar = comment;
+        this.avtentikacijaService.getUsername()
+          .catch(err => console.log(err))
+          .then(username => {
+            // preveri če uporabnik JE DEJANSKI AVTOR tega bloga!!!
+            if(username !== this.prvotniKomentar.avtor)
+              this.router.navigate(['/']);
+          });
     });
 
   }
 
   urediKomentar() {
-
+    // posodobi blog
+    this.databaseService.updateCommentById(this.prvotniKomentar)
+      .catch(err => console.log(err))
+      .then(res => {
+        this.router.navigate(['/']);
+      });
   }
 
   izbrisiKomentar() {

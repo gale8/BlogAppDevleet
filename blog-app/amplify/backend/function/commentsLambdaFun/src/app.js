@@ -193,9 +193,17 @@ app.put(path, function(req, res) {
 
   let putItemParams = {
     TableName: tableName,
-    Item: req.body
-  }
-  dynamodb.put(putItemParams, (err, data) => {
+    Key: {
+      "PK": req.body.PK,
+      "SK": req.body.SK
+    },
+    UpdateExpression: 'set vsebina = :v',
+    ExpressionAttributeValues: {
+      ":v" : req.body.vsebina
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+  dynamodb.update(putItemParams, (err, data) => {
     if(err) {
       res.statusCode = 500;
       res.json({error: err, url: req.url, body: req.body});

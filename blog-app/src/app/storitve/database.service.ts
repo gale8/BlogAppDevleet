@@ -194,4 +194,17 @@ export class DatabaseService {
         console.log(error.response);
       });
   }
+
+  updateCommentById(komentar: Komentar) : Promise<any> {
+    const myInit = {
+      headers: {
+        //"X-Api-Key": jwt
+      },
+      body: komentar
+    };
+    return API.put("blogAppApi","/comments",myInit)
+      .catch(err => console.log(err))
+      .then(res => res.data);
+  }
+
 }
