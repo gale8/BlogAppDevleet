@@ -164,6 +164,19 @@ export class DatabaseService {
     }
   }
 
+  getCommentById(pk: string, sk: string) : Promise<any> {
+    const myInit = {
+      headers:{
+        //"X-Api-Key": jwt
+      },
+      response: true
+    };
+    return API.get("blogAppApi","/comments/object/"+pk+"/"+sk,myInit)
+      .then(res => res.data)
+      .catch(err => console.log(err));
+  }
+
+
   createComment(comment: any) : Promise<any> {
     //console.log(jwt);
     // posli podatke na streznik

@@ -11,3 +11,10 @@
   border-left: 4px solid #F4F0F7;
   padding-left: 10px;
 }
+
+.padding-left-zero {
+  padding-left: 0;
+}
+.padding-right-zero {
+  padding-right: 0;
+}

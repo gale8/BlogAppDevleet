@@ -104,6 +104,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
 
   }
 
+  // fun za dodajanja KOMENTARJA nekemu KOMENTARJU!
   async dodajPodKomentar(event: any) {
     // get PK of parent comment!!!
     const pk = event.target.komentarId.value;
@@ -117,6 +118,14 @@ export class PodrobnostiBlogaComponent implements OnInit {
         this.noviPodKomentar.vsebina = "";
         this.databaseService.addCommentToTab(comment,comment.PK,this.mainCommentTable);
       }).catch(err => console.log(err));
+  }
+
+  urediKomentar() {
+
+  }
+
+  izbrisiKomentar() {
+
   }
 
 

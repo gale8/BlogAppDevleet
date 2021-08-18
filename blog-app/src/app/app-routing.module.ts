@@ -6,6 +6,7 @@ import {SeznamBlogovComponent} from "./komponente/seznam-blogov/seznam-blogov.co
 import {PodrobnostiBlogaComponent} from "./komponente/podrobnosti-bloga/podrobnosti-bloga.component";
 import {KreiranjeBlogaComponent} from "./komponente/kreiranje-bloga/kreiranje-bloga.component";
 import {UrediBlogComponent} from "./komponente/uredi-blog/uredi-blog.component";
+import {UrediKomentarComponent} from "./komponente/uredi-komentar/uredi-komentar.component";
 
 const routes: Routes = [
   {path:'prijava', component: PrijavaComponent},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: '', component: SeznamBlogovComponent},
   {path: 'blogi/:blogId', component: PodrobnostiBlogaComponent},
   {path: 'kreirajBlog', component: KreiranjeBlogaComponent},
-  {path: 'urediBlog/:blogId', component: UrediBlogComponent}
+  {path: 'urediBlog/:blogId', component: UrediBlogComponent},
+  {path: 'urediKomentar/:komentarId', component: UrediKomentarComponent}
 ];
 
 @NgModule({

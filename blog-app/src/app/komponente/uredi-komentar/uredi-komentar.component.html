@@ -1,0 +1,24 @@
+<!-- GLAVNI NASLOV -->
+<h1 class="mt-4 glavni-naslov">{{naslov}}</h1>
+
+<!-- KREIRAJ BLOG FORM -->
+<form class="zacetni-obrazec mt-4">
+  <div class="form-group">
+    <label for="vsebina"><b>Vsebina</b></label>
+    <input id="vsebina" class="form-control" type="text" name="vsebina" [(ngModel)]="prvotniKomentar.vsebina"  value="{{prvotniKomentar.vsebina}}">
+  </div>
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-md btn-warning mb-2" (click)="urediKomentar()" style="color: white; width: 100%">Uredi komentar</button>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-md btn-danger" (click)="izbrisiKomentar()" style="width: 100%">Izbriši komentar</button>
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+</form>
+<div class="mt-1 mb-3" style="width: 40%; margin: 0 auto; text-align: left">
+  <b><a style="font-size: 1.3em" routerLink="/">Nazaj</a></b>
+</div>

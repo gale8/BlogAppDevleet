@@ -40,20 +40,26 @@
       <div class="komentar mb-2 mt-2" *ngFor="let komentar of mainCommentTable">
         <h6>{{komentar.avtor}} <!-- <span style="right: 0" class="text-muted">on {{komentar.datum}}</span> --></h6>
         <p>{{komentar.vsebina}}</p>
-        <form (ngSubmit)="dodajPodKomentar($event)">
-          <div class="form-group">
-            <div class="row">
-              <input type="text" name="komentarId" value="{{komentar.SK}}" hidden>
-              <div class="col-md-3">
-                <input class="form-control" type="text" name="komentar" [(ngModel)]="noviPodKomentar.vsebina" placeholder="Napiši podkomentar">
+        <div class="row">
+          <form class="col-md-4" (ngSubmit)="dodajPodKomentar($event)">
+            <div class="form-group">
+              <div class="row">
+                <input type="text" name="komentarId" value="{{komentar.SK}}" hidden>
+                <div class="col-md-9 padding-right-zero">
+                  <input class="form-control" type="text" name="komentar" [(ngModel)]="noviPodKomentar.vsebina" placeholder="Napiši podkomentar">
+                </div>
+                <div class="col-md-3">
+                  <button type="submit" class="btn btn-sm btn-info">Dodaj!</button>
+                </div>
               </div>
-              <div class="col-md-2">
-                <button type="submit" class="btn btn-sm btn-info">Dodaj!</button>
-              </div>
-              <div class="col-md-7"></div>
             </div>
+          </form>
+          <div class="col-md-2 padding-left-zero">
+            <b><a routerLink="/urediKomentar/{{komentar.PK+komentar.SK}}">Uredi</a></b>
           </div>
-        </form>
+          <div class="col-md-6"></div>
+        </div>
+
         <!-- poglej ce ima podkomentarje! -->
         <div class="ml-5 indent" *ngIf="komentar.komentarji.length > 0">
           <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: komentar.komentarji }"></ng-container>
