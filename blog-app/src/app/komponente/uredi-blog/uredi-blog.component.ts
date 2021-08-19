@@ -46,7 +46,7 @@ export class UrediBlogComponent implements OnInit {
         .then(username => {
           // preveri če uporabnik JE DEJANSKI AVTOR tega bloga!!!
           if(username !== this.prvotniBlog.avtor)
-            this.router.navigate(['/']);
+            this.router.navigate(['error']);
         });
       });
   }

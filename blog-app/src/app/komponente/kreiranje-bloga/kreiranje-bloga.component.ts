@@ -31,7 +31,7 @@ export class KreiranjeBlogaComponent implements OnInit {
     // preveri ce je uporabnik prijavljen
     this.avtentikacijaService.jePrijavljen().then(res => {
       if(!res) {
-        this.router.navigate(['/']);
+        this.router.navigate(['error']);
       }
     });
 

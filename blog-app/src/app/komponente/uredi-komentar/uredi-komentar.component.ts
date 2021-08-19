@@ -55,7 +55,7 @@ export class UrediKomentarComponent implements OnInit {
           .then(username => {
             // preveri če uporabnik JE DEJANSKI AVTOR tega bloga!!!
             if(username !== this.prvotniKomentar.avtor)
-              this.router.navigate(['/']);
+              this.router.navigate(['error']);
           });
     });
 

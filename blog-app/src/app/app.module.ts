@@ -14,6 +14,7 @@ import { KreiranjeBlogaComponent } from './komponente/kreiranje-bloga/kreiranje-
 import { UrediBlogComponent } from './komponente/uredi-blog/uredi-blog.component';
 import { UrediKomentarComponent } from './komponente/uredi-komentar/uredi-komentar.component';
 import { NavigationBarComponent } from './komponente/navigation-bar/navigation-bar.component';
+import { ErrorPageComponent } from './komponente/error-page/error-page.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { NavigationBarComponent } from './komponente/navigation-bar/navigation-b
     KreiranjeBlogaComponent,
     UrediBlogComponent,
     UrediKomentarComponent,
-    NavigationBarComponent
+    NavigationBarComponent,
+    ErrorPageComponent
   ],
     imports: [
         BrowserModule,
