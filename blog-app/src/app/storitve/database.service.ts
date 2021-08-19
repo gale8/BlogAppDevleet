@@ -60,29 +60,36 @@ export class DatabaseService {
       .then(response => {
         console.log(response);
         // kreiraj še en vnos samo z BLOG ID:
-        initParams.body["avtor"] = "";
+        initParams.body["blog"] = false;
         API.put("blogAppApi","/blogs", initParams)
-          .then()
+          .then( response => response)
           .catch(error => console.log(error.response));
       }).catch(error => {
       console.log(error.response);
     });
   }
 
-  deleteBlogById(username: string, idBlog: string) : Promise<any> {
+  async deleteBlogById(username: string, idBlog: string) : Promise<any> {
+    // pridobi JWT zeton
+    let jwt = "";
+    await Auth.currentSession().then(res => { jwt = res.getAccessToken().getJwtToken(); });
+
     const myInit = {
-      headers: {},
+      headers: {
+        "X-Api-Key": jwt
+      },
       body: {
-        izbrisiAvtorja: ""
+        avtor: username,
+        blog: true
       }
     };
     return API.del("blogAppApi","/blogs/object/"+idBlog.split("#")[1]+"/"+idBlog.split("#")[1],myInit)
       .then(res => {
+        console.log(res);
         // izbriši še en zapis
-        console.log("USPESNO IZBRISAN BLOG BLOG");
-        myInit.body.izbrisiAvtorja = username;
+        myInit.body.blog = false;
         API.del("blogAppApi","/blogs/object/"+username+"/"+idBlog.split("#")[1],myInit)
-          .then(res => console.log("USPESNO IZBRISAN USER BLOG"))
+          .then(res => console.log(res))
           .catch(error => {
             console.log(error.response);
           });

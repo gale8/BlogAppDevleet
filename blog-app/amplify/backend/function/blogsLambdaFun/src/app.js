@@ -13,7 +13,11 @@ var awsServerlessExpressMiddleware = require('aws-serverless-express/middleware'
 var bodyParser = require('body-parser')
 var express = require('express')
 
-var uuid = require('node-uuid')
+var uuid = require('uuid');
+// JWT dependencies
+var jwt = require('jsonwebtoken');
+var jwkToPem = require('jwk-to-pem');
+const rp = require('request-promise');
 
 AWS.config.update({ region: process.env.TABLE_REGION });
 
@@ -59,6 +63,13 @@ const convertUrlType = (param, type) => {
     default:
       return param;
   }
+};
+
+// function returns DECODED JWT!!
+function decodeJWT(token) {
+  var decodedJwt = jwt.decode(token,{complete: true});
+  // dekodiran zeton!
+  return decodedJwt;
 }
 
 /********************************
@@ -151,11 +162,19 @@ app.put(path, function(req, res) {
   }
   var pkUID = "";
   // Spremeni oba zapisa -> avtor/blog IN blog/blog
-  if(req.body["avtor"] === ""){
+  if(req.body["blog"] === false){
     pkUID = req.body.SK;
   } else {
     pkUID = "USER#"+req.body["avtor"];
   }
+
+  var token = req.get("X-Api-Key");
+  var jwtDecoded = decodeJWT(token);
+  // restrict access only to blog author!!
+  if(jwtDecoded.payload.username !== req.body.avtor){
+    return res.json({code: 403, message: "Unauthorized"});
+  }
+
   // parametri za UPDATE --> UPDATE_EXPRESSION
   let putItemParams = {
     TableName: tableName,
@@ -253,13 +272,20 @@ app.delete(path + '/object' + hashKeyPath + sortKeyPath, function(req, res) {
     }
   }
 
+  var token = req.get("X-Api-Key");
+  var jwtDecoded = decodeJWT(token);
+
+  // restrict access only to blog author!!
+  if(jwtDecoded.payload.username !== req.body.avtor){
+    return res.json({code: 403, message: "Unauthorized"});
+  }
+
   // podaj ustrezno oznako za PK in SK!!!
   params[sortKeyName] = "BLOG#"+req.params[sortKeyName];
-  if(req.body.izbrisiAvtorja === "")
+  if(req.body.blog === true)
     params[partitionKeyName] = "BLOG#"+req.params[partitionKeyName];
   else
     params[partitionKeyName] = "USER#"+req.params[partitionKeyName];
-
 
   let removeItemParams = {
     TableName: tableName,

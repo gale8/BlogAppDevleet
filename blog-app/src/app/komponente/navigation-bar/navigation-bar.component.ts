@@ -15,7 +15,7 @@ export class NavigationBarComponent implements OnInit {
   constructor(private router: Router, private avtentikacijaService: AvtentikacijaService) {}
 
   ngOnInit(): void {
-    console.log("NAVIGATION INIT");
+    //console.log("NAVIGATION INIT");
     this.getPrijavljen();
   }
 
@@ -31,7 +31,7 @@ export class NavigationBarComponent implements OnInit {
   async getPrijavljen() {
     await this.avtentikacijaService.jePrijavljen()
       .then(res => {
-        console.log("get je PRIJAVLJEN: ");
+        //console.log("get je PRIJAVLJEN: ");
         this.avtentikacijaService.getUsername().then(username => this.username = username);
         this.prijavljen = res;
       });

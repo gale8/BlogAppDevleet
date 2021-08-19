@@ -67,13 +67,16 @@ export class UrediBlogComponent implements OnInit {
           SK: this.prvotniBlog.SK,
           naslov: this.prvotniBlog.naslov,
           vsebina: this.prvotniBlog.vsebina,
-          avtor: this.prvotniBlog.avtor
+          avtor: this.prvotniBlog.avtor,
+          blog: true
         }, // vneseni podatki!
-        headers: {},
+        headers: {
+          "X-Api-Key": jwt
+        }
       };
       this.databaseService.updateBlogById(myInit)
         .then(res => {
-          console.log("USPESNO posodobljen blog");
+          console.log("USPESNO posodobljen blog" +res);
           this.praznaPolja = false;
           this.napakaPriVnosu = false;
           this.router.navigate(['blogi/'+this.prvotniBlog.PK]);

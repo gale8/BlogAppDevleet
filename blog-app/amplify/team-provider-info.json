@@ -1,36 +1,36 @@
 {
-    "dev": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-blogapp-dev-03715-authRole",
-            "UnauthRoleArn": "arn:aws:iam::513542032132:role/amplify-blogapp-dev-03715-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::513542032132:role/amplify-blogapp-dev-03715-authRole",
-            "Region": "eu-west-2",
-            "DeploymentBucketName": "amplify-blogapp-dev-03715-deployment",
-            "UnauthRoleName": "amplify-blogapp-dev-03715-unauthRole",
-            "StackName": "amplify-blogapp-dev-03715",
-            "StackId": "arn:aws:cloudformation:eu-west-2:513542032132:stack/amplify-blogapp-dev-03715/361b84f0-f899-11eb-92de-02e3cdcba4dc",
-            "AmplifyAppId": "d1vxm41ub3bon"
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-blogapp-dev-03715-authRole",
+      "UnauthRoleArn": "arn:aws:iam::513542032132:role/amplify-blogapp-dev-03715-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::513542032132:role/amplify-blogapp-dev-03715-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-blogapp-dev-03715-deployment",
+      "UnauthRoleName": "amplify-blogapp-dev-03715-unauthRole",
+      "StackName": "amplify-blogapp-dev-03715",
+      "StackId": "arn:aws:cloudformation:eu-west-2:513542032132:stack/amplify-blogapp-dev-03715/361b84f0-f899-11eb-92de-02e3cdcba4dc",
+      "AmplifyAppId": "d1vxm41ub3bon"
+    },
+    "categories": {
+      "auth": {
+        "blogapp6500b179": {}
+      },
+      "function": {
+        "blogsLambdaFun": {
+          "deploymentBucketName": "amplify-blogapp-dev-03715-deployment",
+          "s3Key": "amplify-builds/blogsLambdaFun-6f5366316e3755473567-build.zip"
         },
-        "categories": {
-            "auth": {
-                "blogapp6500b179": {}
-            },
-            "function": {
-                "blogsLambdaFun": {
-                    "deploymentBucketName": "amplify-blogapp-dev-03715-deployment",
-                    "s3Key": "amplify-builds/blogsLambdaFun-67676b3030442f567575-build.zip"
-                },
-                "commentsLambdaFun": {
-                    "deploymentBucketName": "amplify-blogapp-dev-03715-deployment",
-                    "s3Key": "amplify-builds/commentsLambdaFun-523459554a3949796959-build.zip"
-                }
-            },
-            "hosting": {
-                "amplifyhosting": {
-                    "appId": "d1vxm41ub3bon",
-                    "type": "manual"
-                }
-            }
+        "commentsLambdaFun": {
+          "deploymentBucketName": "amplify-blogapp-dev-03715-deployment",
+          "s3Key": "amplify-builds/commentsLambdaFun-523459554a3949796959-build.zip"
         }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1vxm41ub3bon",
+          "type": "manual"
+        }
+      }
     }
+  }
 }
