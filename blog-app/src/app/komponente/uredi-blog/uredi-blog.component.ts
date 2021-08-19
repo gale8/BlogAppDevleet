@@ -17,6 +17,9 @@ export class UrediBlogComponent implements OnInit {
 
   prvotniBlog : Blog = new Blog("","","","","","");
 
+  praznaPolja = false;
+  napakaPriVnosu = false;
+
   constructor(private pot: ActivatedRoute,
               private router: Router,
               private avtentikacijaService: AvtentikacijaService,
@@ -49,25 +52,37 @@ export class UrediBlogComponent implements OnInit {
   }
 
   async urediBlog() {
-    //console.log(this.prvotniBlog);
-    let jwt = ""
-    await Auth.currentSession().then(res => jwt = res.getAccessToken().getJwtToken());
-    const myInit = {
-      body: {
-        PK: this.prvotniBlog.PK,
-        SK: this.prvotniBlog.SK,
-        naslov: this.prvotniBlog.naslov,
-        vsebina: this.prvotniBlog.vsebina,
-        avtor: this.prvotniBlog.avtor
-      }, // vneseni podatki!
-      headers: {},
-    };
-    this.databaseService.updateBlogById(myInit)
-      .then(res => {
-        console.log("USPESNO posodobljen blog");
-        this.router.navigate(['blogi/'+this.prvotniBlog.PK]);
-      })
-      .catch(err => console.log("Napaka pri posodabljanju!! ERR: "+err))
+    this.praznaPolja = false;
+    this.napakaPriVnosu = false;
+
+    if(this.prvotniBlog.naslov === "" || this.prvotniBlog.vsebina === "") {
+      this.praznaPolja = true;
+    } else {
+      //console.log(this.prvotniBlog);
+      let jwt = ""
+      await Auth.currentSession().then(res => jwt = res.getAccessToken().getJwtToken());
+      const myInit = {
+        body: {
+          PK: this.prvotniBlog.PK,
+          SK: this.prvotniBlog.SK,
+          naslov: this.prvotniBlog.naslov,
+          vsebina: this.prvotniBlog.vsebina,
+          avtor: this.prvotniBlog.avtor
+        }, // vneseni podatki!
+        headers: {},
+      };
+      this.databaseService.updateBlogById(myInit)
+        .then(res => {
+          console.log("USPESNO posodobljen blog");
+          this.praznaPolja = false;
+          this.napakaPriVnosu = false;
+          this.router.navigate(['blogi/'+this.prvotniBlog.PK]);
+        })
+        .catch(err => {
+          console.log("Napaka pri posodabljanju!! ERR: "+err)
+          this.napakaPriVnosu = true;
+        });
+    }
   }
 
   izbrisiBlog() {

@@ -20,6 +20,8 @@ export class KreiranjeBlogaComponent implements OnInit {
     avtor: "" // trenutno prijavljen uporabnik!!!
   };
 
+  praznaPolja = false;
+
   constructor(private router: Router,
               private avtentikacijaService: AvtentikacijaService,
               private databaseService: DatabaseService
@@ -43,11 +45,23 @@ export class KreiranjeBlogaComponent implements OnInit {
   }
 
   kreirajBlog() {
-    // TODO filtriranje in preverjanje INPUT-a!!!
-    console.log(this.noviBlog);
-    this.databaseService.createNewBlog(this.noviBlog)
-      .catch(err => console.log("Napaka pri kreiranju!! ERR: "+err))
-      .then(res => this.router.navigate(['']))
+    this.praznaPolja = false;
+    // filtriranje in preverjanje INPUT-a!!!
+    if(this.noviBlog.naslov === "" || this.noviBlog.vsebina === "") {
+      this.praznaPolja = true;
+    } else {
+      this.praznaPolja = false;
+      //console.log(this.noviBlog);
+      this.databaseService.createNewBlog(this.noviBlog)
+        .catch(err => {
+          this.praznaPolja = true;
+          console.log("Napaka pri kreiranju!! ERR: "+err);
+        })
+        .then(res => {
+          this.praznaPolja = false;
+          this.router.navigate([''])
+        });
+    }
   }
 
 }

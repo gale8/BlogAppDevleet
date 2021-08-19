@@ -20,6 +20,8 @@ export class PodrobnostiBlogaComponent implements OnInit {
   jePrijavljen = false;
   trenutniPrijavljen = "";
 
+  praznaPolja = false;
+
   mainCommentTable : Komentar[] = []; // glavna tabela komentarjev, ki pripadajo blogu!!!
 
   noviKomentar = {
@@ -87,34 +89,49 @@ export class PodrobnostiBlogaComponent implements OnInit {
 
   // fun za dodajanje GLAVNEGA komentarja blogu!!!
   async dodajKomentar() {
-    // dodaj avtorja
-    await this.avtentikacijaService.getUsername().then(username => this.noviKomentar.avtor = username).catch(err => console.log(err));
-    this.noviKomentar.PK = this.blog.PK;
+    this.praznaPolja = false;
 
-    this.databaseService.createComment(this.noviKomentar)
-      .then(comment => {
-        //console.log(comment);
-        // dodaj novi comment v tabelo
-        let novi = new Komentar(comment.PK, comment.SK, comment.vsebina, comment.upvotes, comment.avtor, []);
-        this.mainCommentTable.push(novi);
-      }).catch(err => console.log(err));
+    if(this.noviKomentar.vsebina === "") {
+      this.praznaPolja = true;
+    } else {
+      // dodaj avtorja
+      await this.avtentikacijaService.getUsername().then(username => this.noviKomentar.avtor = username).catch(err => console.log(err));
+      this.noviKomentar.PK = this.blog.PK;
+
+      this.databaseService.createComment(this.noviKomentar)
+        .then(comment => {
+          this.praznaPolja = false;
+          this.noviKomentar.vsebina = "";
+          // dodaj novi comment v tabelo
+          let novi = new Komentar(comment.PK, comment.SK, comment.vsebina, comment.upvotes, comment.avtor, []);
+          this.mainCommentTable.push(novi);
+        }).catch(err => {
+          this.praznaPolja = true;
+          console.log(err)
+      });
+    }
 
   }
 
   // fun za dodajanja KOMENTARJA nekemu KOMENTARJU!
   async dodajPodKomentar(event: any) {
-    // get PK of parent comment!!!
-    const pk = event.target.komentarId.value;
-    this.noviPodKomentar.PK = pk;
-    // dodaj avtorja
-    await this.avtentikacijaService.getUsername().then(username => this.noviPodKomentar.avtor = username).catch(err => console.log(err));
-    //console.log(this.noviPodKomentar);
 
-    this.databaseService.createComment(this.noviPodKomentar)
-      .then(comment => {
-        this.noviPodKomentar.vsebina = "";
-        this.databaseService.addCommentToTab(comment,comment.PK,this.mainCommentTable);
-      }).catch(err => console.log(err));
+    if(this.noviPodKomentar.vsebina === "") {
+      return;
+    } else {
+      // get PK of parent comment!!!
+      const pk = event.target.komentarId.value;
+      this.noviPodKomentar.PK = pk;
+      // dodaj avtorja
+      await this.avtentikacijaService.getUsername().then(username => this.noviPodKomentar.avtor = username).catch(err => console.log(err));
+      //console.log(this.noviPodKomentar);
+
+      this.databaseService.createComment(this.noviPodKomentar)
+        .then(comment => {
+          this.noviPodKomentar.vsebina = "";
+          this.databaseService.addCommentToTab(comment,comment.PK,this.mainCommentTable);
+        }).catch(err => console.log(err));
+    }
   }
 
   upvote(pk:string, sk:string) {

@@ -6,6 +6,12 @@
   <div class="form-group">
     <label for="vsebina"><b>Vsebina</b></label>
     <input id="vsebina" class="form-control" type="text" name="vsebina" [(ngModel)]="prvotniKomentar.vsebina"  value="{{prvotniKomentar.vsebina}}">
+    <div *ngIf="praznaPolja" class="alert alert-danger mt-3 mb-3" role="alert">
+      Prosim izpolnite vsa polja.
+    </div>
+    <div *ngIf="napakaPriVnosu" class="alert alert-danger mt-3 mb-3" role="alert">
+      Prišlo je do napake pri posodabljanju komentarja! Poskusite ponovno.
+    </div>
   </div>
   <div class="row">
     <div class="col-md-1"></div>

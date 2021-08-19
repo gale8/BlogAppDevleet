@@ -10,6 +10,12 @@
   <div class="form-group">
     <label for="vsebina"><b>Vsebina</b></label>
     <textarea id="vsebina" class="form-control" name="vsebina" [(ngModel)]="prvotniBlog.vsebina" rows="10">{{prvotniBlog.vsebina}}</textarea>
+    <div *ngIf="praznaPolja" class="alert alert-danger mt-3 mb-3" role="alert">
+      Prosim izpolnite vsa polja.
+    </div>
+    <div *ngIf="napakaPriVnosu" class="alert alert-danger mt-3 mb-3" role="alert">
+      Prišlo je do napake pri posodabljanju. Le <b>{{prvotniBlog.avtor}}</b> lahko posodobi ta blog.
+    </div>
   </div>
   <div class="row">
     <div class="col-md-1"></div>
@@ -24,5 +30,5 @@
   </div>
 </form>
 <div class="mt-1 mb-3" style="width: 40%; margin: 0 auto; text-align: left">
-  <b><a style="font-size: 1.3em" routerLink="/">Nazaj</a></b>
+  <b><a style="font-size: 1.3em" routerLink="/blogi/{{prvotniBlog.PK}}">Nazaj</a></b>
 </div>

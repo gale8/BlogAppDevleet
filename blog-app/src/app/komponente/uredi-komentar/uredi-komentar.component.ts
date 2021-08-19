@@ -17,6 +17,9 @@ export class UrediKomentarComponent implements OnInit {
 
   prvotniKomentar = new Komentar("","","",[],"",[]);
 
+  praznaPolja = false;
+  napakaPriVnosu = false;
+
   constructor(private router: Router,
               private avtentikacijaService: AvtentikacijaService,
               private databaseService: DatabaseService,
@@ -59,12 +62,25 @@ export class UrediKomentarComponent implements OnInit {
   }
 
   urediKomentar() {
-    // posodobi blog
-    this.databaseService.updateCommentById(this.prvotniKomentar)
-      .catch(err => console.log(err))
-      .then(res => {
-        this.router.navigate(['/']);
-      });
+    this.praznaPolja = false;
+    this.napakaPriVnosu = false;
+    // filtritraj vnos:
+    if(this.prvotniKomentar.vsebina === "") {
+      this.praznaPolja = true;
+    } else {
+      // posodobi komentar
+      this.databaseService.updateCommentById(this.prvotniKomentar)
+        .catch(err => {
+          console.log(err);
+          this.napakaPriVnosu = true;
+          this.praznaPolja = false;
+        })
+        .then(res => {
+          this.praznaPolja = false;
+          this.napakaPriVnosu = false;
+          this.router.navigate(['/']);
+        });
+    }
   }
 
   async izbrisiKomentar() {
