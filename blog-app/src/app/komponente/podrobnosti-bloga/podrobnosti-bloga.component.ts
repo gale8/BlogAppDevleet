@@ -137,15 +137,15 @@ export class PodrobnostiBlogaComponent implements OnInit {
   upvote(pk:string, sk:string) {
     var PK = pk.split("#")[0]+"%23"+pk.split("#")[1];
     var SK = sk.split("#")[0]+"%23"+sk.split("#")[1];
-
-    this.glasuj(PK,SK,1);
+    if (this.jePrijavljen)
+      this.glasuj(PK,SK,1);
   }
 
   downvote(pk:string, sk:string) {
     var PK = pk.split("#")[0]+"%23"+pk.split("#")[1];
     var SK = sk.split("#")[0]+"%23"+sk.split("#")[1];
-
-    this.glasuj(PK,SK,-1);
+    if(this.jePrijavljen)
+      this.glasuj(PK,SK,-1);
   }
 
   glasuj(PK: string, SK: string, glas: number) {
@@ -158,7 +158,7 @@ export class PodrobnostiBlogaComponent implements OnInit {
         // poglej če je avtor že upvote-al ta komentar!
         for (var i = 0; i<komentar.upvotes.length; i++) {
           var vote = komentar.upvotes[i];
-          if(vote.avtor == this.trenutniPrijavljen && vote.vote == 1){
+          if(vote.avtor == this.trenutniPrijavljen && (vote.vote == 1 || vote.vote == -1)){
             jeGlasoval = true;
             var novi = {
               avtor: vote.avtor,

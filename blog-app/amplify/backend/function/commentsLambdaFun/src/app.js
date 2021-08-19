@@ -232,10 +232,10 @@ app.put(path+"/vote", function(req, res) {
   var token = req.get("X-Api-Key");
   var decodedToken = decodeJWT(token);
 
-  /* preveri, če ureja komentar njegov avtor:
-  if(decodedToken.payload.username !== req.body.avtor) {
+  // preveri, če glasuje prijavljeni uporabnik!!
+  if(!decodedToken.payload.username) {
     return res.json({statusCode: 403, error: "Unauthorized"});
-  }*/
+  }
 
   let putItemParams = {
     TableName: tableName,
