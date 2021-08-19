@@ -74,6 +74,36 @@ export class DatabaseService {
     let jwt = "";
     await Auth.currentSession().then(res => { jwt = res.getAccessToken().getJwtToken(); });
 
+    // najprej pridobi vse glavne komentarje bloga ---------
+    const inigGet = {
+      headers: {},
+      response: true
+    };
+
+    let vsiGlavniKomentarji : Komentar[] = [];
+
+    await API.get("blogAppApi","/comments/BLOG%23"+idBlog.split("#")[1],inigGet)
+      .then(res => {
+        var comments = res.data;
+        // dodaj glevne komentarje v tabelo!!
+        for(var i = 0; i<comments.length; i++) {
+          vsiGlavniKomentarji[i] = new Komentar(comments[i].PK,comments[i].SK,comments[i].vsebina,comments[i].upvotes,comments[i].avtor,[]);
+        }
+      })
+      .catch(err => err.response);
+    // ----------------------------------
+    await this.getCommentChain(vsiGlavniKomentarji)
+      .catch(err => console.log(err))
+      .then(res => {
+        var commentChain = res as Komentar[];
+        // izbrisi komentarje!!
+        this.deleteComments(commentChain,jwt,username)
+          .catch(err => console.log(err))
+          .then(res => {
+            console.log("Uspesno izbrisan comment chain!");
+          });
+      });
+
     const myInit = {
       headers: {
         "X-Api-Key": jwt
@@ -89,7 +119,14 @@ export class DatabaseService {
         // izbriši še en zapis
         myInit.body.blog = false;
         API.del("blogAppApi","/blogs/object/"+username+"/"+idBlog.split("#")[1],myInit)
-          .then(res => console.log(res))
+          .then(res => {
+            console.log(res);
+            if(res.code) {
+              // UNAUTHORIZED
+            } else {
+
+            }
+          })
           .catch(error => {
             console.log(error.response);
           });
@@ -228,7 +265,7 @@ export class DatabaseService {
 
   // fun za izbris COMMENT CHAIN-a!
   async deleteComments(commentChainArr: Komentar[], jwt: string, avtorKomentarja: string) : Promise<any>{
-    console.log(avtorKomentarja);
+    //console.log(avtorKomentarja);
     if(commentChainArr == []) return;
     else {
       for (var i = 0; i<commentChainArr.length; i++) {
