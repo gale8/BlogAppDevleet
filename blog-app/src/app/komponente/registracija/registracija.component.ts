@@ -20,6 +20,11 @@ export class RegistracijaComponent implements OnInit {
     username: ""
   };
 
+  napakaPriRegistraciji = false;
+  praznaPolja = false;
+
+  infoPolje = false;
+
   constructor(private router: Router, private avtentikacijaService: AvtentikacijaService) { }
 
   ngOnInit(): void {
@@ -35,12 +40,32 @@ export class RegistracijaComponent implements OnInit {
     let username = this.registracijaPodatki.username;
     let password = this.registracijaPodatki.geslo;
     let email = this.registracijaPodatki.email;
+
+    this.praznaPolja = false;
+    this.napakaPriRegistraciji = false;
+
     // TODO filtriranje in preverjanje INPUT-a!!!
-    console.log(this.registracijaPodatki);
-    // poslji podatke na streznik za avtorizacijo s pomocjo SERVICE-a
-    this.avtentikacijaService.registracija(username,email,password)
-      .catch()
-      .then(user => this.router.navigate(['prijava']));
+    if(this.registracijaPodatki.ime === "" || this.registracijaPodatki.priimek === "" || this.registracijaPodatki.email === "" || this.registracijaPodatki.username === "" || this.registracijaPodatki.geslo === ""){
+      this.praznaPolja = true;
+    } else {
+      console.log(this.registracijaPodatki);
+      // poslji podatke na streznik za avtorizacijo s pomocjo SERVICE-a
+      this.avtentikacijaService.registracija(username,email,password)
+        .then(response => {
+          // preveri če je bila registracija uspešna:
+          if(response.message && response.code) {
+            this.napakaPriRegistraciji = true;
+            this.praznaPolja = false;
+          } else {
+            // uspešna registracija:
+            this.router.navigate(['prijava']);
+          }
+        });
+    }
+  }
+
+  infoField() {
+    this.infoPolje = !this.infoPolje;
   }
 
 }

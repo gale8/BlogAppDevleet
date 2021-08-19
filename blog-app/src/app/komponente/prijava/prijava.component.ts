@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Auth } from 'aws-amplify';
 import {Router} from "@angular/router";
 import {AvtentikacijaService} from "../../storitve/avtentikacija.service";
 
@@ -13,11 +12,19 @@ export class PrijavaComponent implements OnInit {
   naslov = "Basic-ish AF Blogs";
 
   prijavaPodatki = {
-    email: "",
+    username: "",
     geslo: ""
   };
 
-  constructor(private router: Router, private avtentikacijaService: AvtentikacijaService) { }
+  praznaPolja = false;
+  napakaPriPrijavi = false;
+
+  infoPolje = false;
+
+
+  constructor(private router: Router,
+              private avtentikacijaService: AvtentikacijaService
+  ) { }
 
   ngOnInit(): void {
     // preveri če je uporabnik prijavljen --> preusmeri na glavno stran če je
@@ -30,16 +37,36 @@ export class PrijavaComponent implements OnInit {
 
 
   async prijava() {
-    let username = this.prijavaPodatki.email;
+
+
+    this.praznaPolja = false;
+    this.napakaPriPrijavi = false;
+    let username = this.prijavaPodatki.username;
     let password = this.prijavaPodatki.geslo;
-    // TODO filtriranje in preverjanje INPUT-a!!!
-    console.log(this.prijavaPodatki.email+" || "+this.prijavaPodatki.geslo);
-
-    // posli podatke na streznik za avtorizacijo s pomocjo SERVICE-a
-    this.avtentikacijaService.prijava(username,password)
-      .catch(err => console.log("Napaka pri prijavi!!"))
-      .then(uporabnik => this.router.navigate(["/"]));
-
+    // filtriranje in preverjanje INPUT-a!!!
+    if(username === "" || password === ""){
+      this.praznaPolja = true;
+    }else {
+      // posli podatke na streznik za avtorizacijo s pomocjo SERVICE-a
+      this.avtentikacijaService.prijava(username,password)
+        .then(response => {
+          // poglej če je bila prijava uspešna ali ne!!
+          if(response.code && response.message){
+            this.napakaPriPrijavi = true;
+            this.praznaPolja = false;
+          } else {
+            this.napakaPriPrijavi = false;
+            this.praznaPolja = false;
+            this.router.navigate(["/"]).then(() => {
+              window.location.reload();
+            });
+          }
+        });
+    }
+  }
+  // funkcija za TOGGLE info
+  infoField() {
+    this.infoPolje = !this.infoPolje;
   }
 
 }

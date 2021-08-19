@@ -1,0 +1,25 @@
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#"><i class="fas fa-blog mr-2"></i><b>BAF Blogs</b></a>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" routerLink="/">Domov</a>
+      </li>
+      <li *ngIf="jePrijavljen()" class="nav-item active">
+        <a class="nav-link" routerLink="kreirajBlog">Kreiraj blog</a>
+      </li>
+      <!-- AŽURIRAJ GUMB ZA PRIJAVO (prijava/odjava) -->
+      <li *ngIf="!jePrijavljen()" class="nav-item active">
+        <a class="nav-link" routerLink="prijava">Prijava</a>
+      </li>
+      <li *ngIf="jePrijavljen()" class="nav-item active">
+        <a class="nav-link" (click)="odjava()" >Odjava</a>
+      </li>
+      <!-- USERNAME PRIJAVLJENEGA UPORABNIKA -->
+      <li *ngIf="jePrijavljen()" class="nav-item active">
+        <a class="nav-link"><b>{{username}}</b></a>
+      </li>
+    </ul>
+  </div>
+</nav>

@@ -7,11 +7,20 @@
   <p>Še nimaš ustvarjenega računa? <b><a routerLink="/registracija">Registracija</a></b></p>
   <div class="form-group">
     <label for="username"><b>Uporabniško ime:</b></label>
-    <input id="username" class="form-control vnosno-polje" type="text" name="username" placeholder="npr. Tone123" [(ngModel)]="prijavaPodatki.email" required/>
+    <input id="username" class="form-control vnosno-polje" type="text" name="username" placeholder="npr. Tone123" [(ngModel)]="prijavaPodatki.username" required/>
   </div>
   <div class="form-group">
-    <label for="geslo"><b>Geslo:</b></label>
+    <label for="geslo"><b>Geslo:</b> <b class="ml-1"><i (click)="infoField()" class="far fa-question-circle"></i></b></label>
     <input id="geslo" class="form-control" type="password" name="geslo" [(ngModel)]="prijavaPodatki.geslo" required/>
+    <p *ngIf="infoPolje" class="text-warning mt-1">
+      Geslo mora biti dolgo vsaj 6 znakov.
+    </p>
+  </div>
+  <div *ngIf="praznaPolja" class="alert alert-danger mt-3 mb-3" role="alert">
+    Prosim izpolnite vsa polja.
+  </div>
+  <div *ngIf="napakaPriPrijavi" class="alert alert-danger mt-3 mb-3" role="alert">
+    Napaka pri prijavi! Vnesite ustrezno <b>uporabniško ime</b> in <b>geslo</b>.
   </div>
   <button type="submit" class="btn btn-lg btn-info" style="width: 100%">Prijava</button>
 </form>

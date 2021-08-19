@@ -14,7 +14,7 @@ export class AvtentikacijaService {
       return logInUser;
     } catch (loginErr) {
       console.log(loginErr);
-      return null;
+      return loginErr;
     }
   }
 
@@ -28,11 +28,11 @@ export class AvtentikacijaService {
           email
         }
       });
-      console.log(newUser);
+      //console.log(newUser);
       return newUser
     } catch (err) {
-      console.log("Unsuccessful SignIn! ERRCODE: "+err);
-      return null;
+      console.log(err);
+      return err;
     }
   }
   /* funkcija za odjavo prijavljenega uporabnika */
@@ -71,4 +71,5 @@ export class AvtentikacijaService {
       return ""
     }
   }
+
 }

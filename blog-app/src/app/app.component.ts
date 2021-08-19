@@ -8,36 +8,11 @@ import {AvtentikacijaService} from "./storitve/avtentikacija.service";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, OnChanges{
-  title = 'blog-app';
-  prijavljen = false;
-  username = "";
+export class AppComponent implements OnInit{
 
   constructor(private router: Router, private avtentikacijaService: AvtentikacijaService) {}
 
   ngOnInit(): void {
-    this.jePrijavljen();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.jePrijavljen();
-  }
-
-  async odjava() {
-    this.avtentikacijaService.odjava()
-      .catch()
-      .then(rez =>{
-        this.prijavljen = false;
-        this.router.navigate(['prijava'])
-      });
-  }
-
-  async jePrijavljen(){
-    this.avtentikacijaService.jePrijavljen()
-      .catch()
-      .then(res => {
-        this.prijavljen = res;
-      });
-    this.avtentikacijaService.getUsername().catch().then(username => this.username = username);
-  }
 }
